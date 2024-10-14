@@ -1,0 +1,39 @@
+{
+  "name": "ReactTestApp-DevSupport",
+  "version": "3.10.15",
+  "authors": {
+    "Microsoft Open Source": "microsoftopensource@users.noreply.github.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/microsoft/react-native-test-app",
+  "source": {
+    "git": "https://github.com/microsoft/react-native-test-app.git",
+    "tag": "3.10.15"
+  },
+  "summary": "react-native-test-app provides a test app for all supported platforms as a package",
+  "platforms": {
+    "ios": "14.0",
+    "osx": "10.15",
+    "visionos": "1.0"
+  },
+  "dependencies": {
+    "React-Core": [
+
+    ],
+    "React-jsi": [
+
+    ]
+  },
+  "pod_target_xcconfig": {
+    "CLANG_CXX_LANGUAGE_STANDARD": "c++20",
+    "DEFINES_MODULE": "YES",
+    "SWIFT_OBJC_BRIDGING_HEADER": "ios/ReactTestApp/Public/ReactTestApp-DevSupport-Bridging-Header.h"
+  },
+  "source_files": [
+    "common/AppRegistry.{cpp,h}",
+    "ios/ReactTestApp/AppRegistryModule.{h,mm}",
+    "ios/ReactTestApp/Public/*.h",
+    "ios/ReactTestApp/ReactTestApp-DevSupport.m"
+  ],
+  "public_header_files": "ios/ReactTestApp/Public/*.h"
+}

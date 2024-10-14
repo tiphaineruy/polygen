@@ -1,0 +1,1 @@
+../../../../../../../packages/react-native-wasm/cpp/react-native-wasm.h

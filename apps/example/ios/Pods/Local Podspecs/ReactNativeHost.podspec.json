@@ -1,0 +1,109 @@
+{
+  "name": "ReactNativeHost",
+  "version": "0.5.0",
+  "authors": {
+    "Microsoft Open Source": "microsoftopensource@users.noreply.github.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/microsoft/rnx-kit/tree/main/packages/react-native-host#readme",
+  "source": {
+    "git": "https://github.com/microsoft/rnx-kit",
+    "tag": "@rnx-kit/react-native-host@0.5.0"
+  },
+  "summary": "Simplify React Native initialization",
+  "platforms": {
+    "ios": "13.0",
+    "osx": "10.15",
+    "visionos": "1.0"
+  },
+  "dependencies": {
+    "React-Core": [
+
+    ],
+    "React-cxxreact": [
+
+    ],
+    "ReactCommon/turbomodule/core": [
+
+    ],
+    "React-RCTAppDelegate": [
+
+    ],
+    "React-RCTFabric": [
+
+    ],
+    "Yoga": [
+
+    ],
+    "RCT-Folly": [
+      "2024.01.01.00"
+    ],
+    "glog": [
+
+    ],
+    "ReactCodegen": [
+
+    ],
+    "RCTRequired": [
+
+    ],
+    "RCTTypeSafety": [
+
+    ],
+    "ReactCommon/turbomodule/bridging": [
+
+    ],
+    "React-NativeModulesApple": [
+
+    ],
+    "React-Fabric": [
+
+    ],
+    "React-graphics": [
+
+    ],
+    "React-utils": [
+
+    ],
+    "React-featureflags": [
+
+    ],
+    "React-debug": [
+
+    ],
+    "React-ImageManager": [
+
+    ],
+    "React-rendererdebug": [
+
+    ],
+    "DoubleConversion": [
+
+    ],
+    "hermes-engine": [
+
+    ]
+  },
+  "pod_target_xcconfig": {
+    "CLANG_CXX_LANGUAGE_STANDARD": "c++20",
+    "DEFINES_MODULE": "YES",
+    "GCC_PREPROCESSOR_DEFINITIONS": [
+      "$(inherit)",
+      "USE_HERMES=1",
+      "RCT_NEW_ARCH_ENABLED=1",
+      "USE_FABRIC=1",
+      "USE_BRIDGELESS=1"
+    ],
+    "HEADER_SEARCH_PATHS": "$(PODS_ROOT)/Headers/Private/React-Core $(PODS_CONFIGURATION_BUILD_DIR)/React-runtimescheduler/React_runtimescheduler.framework/Headers \"$(PODS_ROOT)/boost\" \"$(PODS_ROOT)/Headers/Private/Yoga\"",
+    "OTHER_CPLUSPLUSFLAGS": "$(inherited) -DRCT_NEW_ARCH_ENABLED=1 -DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_CFG_NO_COROUTINES=1 -DFOLLY_HAVE_CLOCK_GETTIME=1 -Wno-comma -Wno-shorten-64-to-32"
+  },
+  "source_files": [
+    "cocoa/*.{h,m,mm}",
+    "packages/react-native-host/cocoa/*.{h,m,mm}"
+  ],
+  "public_header_files": [
+    "cocoa/{ReactNativeHost,RNXHostConfig}.h",
+    "packages/react-native-host/cocoa/{ReactNativeHost,RNXHostConfig}.h"
+  ],
+  "compiler_flags": "-DRCT_NEW_ARCH_ENABLED=1 -DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_CFG_NO_COROUTINES=1 -DFOLLY_HAVE_CLOCK_GETTIME=1 -Wno-comma -Wno-shorten-64-to-32"
+}
