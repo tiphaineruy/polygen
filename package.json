@@ -5,6 +5,7 @@
   "homepage": "https://github.com/callstack/react-native-wasm#readme",
   "author": "Callstack (https://github.com/callstack)",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "example": "yarn workspace react-native-wasm-example",
     "lint": "turbo run lint",
@@ -23,8 +24,8 @@
   "devDependencies": {
     "@evilmartians/lefthook": "^1.5.0",
     "@react-native/eslint-config": "^0.73.1",
-    "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
+    "eslint": "^8.51.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.0.3",
     "turbo": "^1.10.7",
@@ -34,7 +35,6 @@
     "apps/*",
     "packages/*"
   ],
-  "packageManager": "yarn@4.5.0",
   "prettier": {
     "quoteProps": "consistent",
     "singleQuote": true,

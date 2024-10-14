@@ -1,11 +1,12 @@
 {
   "name": "WasmExample",
   "displayName": "WasmExample",
-  "singleApp": "tester-app",
+  "singleApp": "wasm-example",
   "components": [
     {
       "appKey": "WasmExample",
-      "displayName": "WasmExample"
+      "displayName": "WasmExample",
+      "slug": "wasm-example"
     }
   ],
   "resources": {
