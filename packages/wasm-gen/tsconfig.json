@@ -3,19 +3,19 @@
     "src"
   ],
   "compilerOptions": {
-    "rootDir": ".",
+    "rootDir": "./src",
     "paths": {
       "react-native-wasm": ["./src/index"]
     },
+    "outDir": "build",
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react-jsx",
     "lib": ["ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "noEmit": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
@@ -26,7 +26,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ESNext",
-    "verbatimModuleSyntax": true
+    "target": "ES2020"
   }
 }

@@ -4,13 +4,17 @@
     "description": "The code generator for react-native-wasm modules",
     "main": "lib/index",
     "source": "src/index",
-    "bin": "./lib/index.js",
+    "bin": {
+        "react-native-wasm": "./build/commands/wasm-gen.js",
+        "react-native-wasm-generate": "./build/commands/wasm-gen-generate.js"
+    },
     "type": "module",
     "files": [
         "src",
         "lib"
     ],
     "scripts": {
+        "build": "tsc",
         "postinstall": "tsc || true",
         "typecheck": "tsc --noEmit",
         "lint": "eslint \"**/*.{ts,js}\""
@@ -19,7 +23,12 @@
     "dependencies": {
         "@webassemblyjs/wasm-parser": "^1.12.1",
         "chalk": "^5.3.0",
-        "commander": "^12.1.0"
+        "commander": "^12.1.0",
+        "consola": "^3.2.3",
+        "execa": "^9.4.1",
+        "find-up": "^7.0.0",
+        "glob": "^11.0.0",
+        "ora": "^8.1.0"
     },
     "eslintConfig": {
         "root": true,

@@ -1,8 +1,16 @@
-#ifndef WASM_H
-#define WASM_H
+#pragma once
 
-namespace wasm {
-  double multiply(double a, double b);
+#include <ReactCommon/TurboModule.h>
+#include <RNWasmSpecJSI.h>
+
+namespace facebook::react {
+
+class ReactNativeWebAssembly: public NativeWebAssemblyCxxSpecJSI {
+  explicit ReactNativeWebAssembly(std::shared_ptr<CallInvoker> jsInvoker) :NativeWebAssemblyCxxSpecJSI(jsInvoker) {}
+
+
 }
 
-#endif /* WASM_H */
+}
+
+

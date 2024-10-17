@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": ".",
+    "rootDir": "./src",
     "paths": {
       "react-native-wasm": ["./src/index"]
     },

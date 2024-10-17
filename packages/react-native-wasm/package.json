@@ -36,7 +36,6 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-wasm-example",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -154,6 +153,13 @@
     "source": "src",
     "output": "lib",
     "targets": [
+      "codegen",
+      [
+        "commonjs",
+        {
+          "esm": true
+        }
+      ],
       [
         "module",
         {
@@ -178,7 +184,7 @@
       "android": "android/generated"
     },
     "android": {
-      "javaPackageName": "com.wasm"
+      "javaPackageName": "com.callstack.reactnative.webassembly"
     }
   }
 }
