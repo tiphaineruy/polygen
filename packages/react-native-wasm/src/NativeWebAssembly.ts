@@ -67,14 +67,19 @@ export interface InternalModuleMetadata {
   readonly exports: ModuleExportDescriptor[];
 }
 
-export type OpaqueNativeInstanceHandle = UnsafeObject;
+export type OpaqueModuleNativeHandle = UnsafeObject;
+export type OpaqueModuleInstanceNativeHandle = UnsafeObject;
 
 export interface Spec extends TurboModule {
   getModuleMetadata(name: string): InternalModuleMetadata;
-  instantiateModule(
-    name: string,
+  loadModule(name: string): OpaqueModuleNativeHandle;
+  unloadModule(module: OpaqueModuleNativeHandle): void;
+
+  createModuleInstance(
+    mod: OpaqueModuleNativeHandle,
     importObject: NativeImportObject
-  ): OpaqueNativeInstanceHandle;
+  ): OpaqueModuleInstanceNativeHandle;
+  destroyModuleInstance(instance: OpaqueModuleInstanceNativeHandle): void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('WebAssembly');

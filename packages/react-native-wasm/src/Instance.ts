@@ -1,15 +1,17 @@
 import type { ImportObject } from './WebAssembly';
-import type { OpaqueNativeInstanceHandle } from './NativeWebAssembly';
-import NativeWASM from './NativeWebAssembly';
+import NativeWASM, {
+  type OpaqueModuleNativeHandle,
+  type OpaqueModuleInstanceNativeHandle,
+} from './NativeWebAssembly';
 
 export class Instance {
   // @ts-ignore
-  #nativeHandle: OpaqueNativeInstanceHandle;
+  #nativeHandle: OpaqueModuleInstanceNativeHandle;
   // @ts-ignore
   #imports: ImportObject;
 
-  constructor(name: string, imports: ImportObject) {
+  constructor(module: OpaqueModuleNativeHandle, imports: ImportObject) {
     this.#imports = imports;
-    this.#nativeHandle = NativeWASM.instantiateModule(name, imports);
+    this.#nativeHandle = NativeWASM.createModuleInstance(module, imports);
   }
 }

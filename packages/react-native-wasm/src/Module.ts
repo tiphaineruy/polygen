@@ -1,8 +1,8 @@
-import NativeWASM from './NativeWebAssembly';
-import type {
-  InternalModuleMetadata,
-  ModuleExportDescriptor,
-  ModuleImportDescriptor,
+import NativeWASM, {
+  type OpaqueModuleNativeHandle,
+  type InternalModuleMetadata,
+  type ModuleExportDescriptor,
+  type ModuleImportDescriptor,
 } from './NativeWebAssembly';
 
 /**
@@ -10,10 +10,12 @@ import type {
  */
 export class Module {
   public name: string;
+  public nativeHandle: OpaqueModuleNativeHandle;
   #metadata: InternalModuleMetadata;
 
   public constructor(name: string) {
     this.name = name;
+    this.nativeHandle = NativeWASM.loadModule(name);
     this.#metadata = NativeWASM.getModuleMetadata(name);
   }
 

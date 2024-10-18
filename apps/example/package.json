@@ -1,7 +1,15 @@
 {
   "name": "react-native-wasm-example",
+  "description": "Example app for React Native",
+  "license": "MIT",
+  "homepage": "https://github.com/callstack/react-native-wasm",
   "version": "0.0.1",
+  "author": "Robert Pasiński <robert.pasinski@callstack.com>",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/react-native-wasm.git"
+  },
   "scripts": {
     "android": "react-native run-android",
     "build:android": "npm run mkdist && react-native bundle --entry-file index.js --platform android --dev true --bundle-output dist/main.android.jsbundle --assets-dest dist && react-native build-android --extra-params \"--no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a\"",
@@ -27,5 +35,36 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@react-native",
+      "prettier"
+    ],
+    "rules": {
+      "react/react-in-jsx-scope": "off",
+      "prettier/prettier": [
+        "error",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "es5",
+          "useTabs": false
+        }
+      ]
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
   }
 }
