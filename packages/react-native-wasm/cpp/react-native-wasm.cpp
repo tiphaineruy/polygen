@@ -2,6 +2,7 @@
 #include <memory>
 #include <dlfcn.h>
 #include "wasm-rt/wasm-rt.h"
+#include <ReactNativeWASMExample/example.h>
 
 typedef void (*wasm_function_ptr)(void*);
 typedef int (*wasm_fib)(void*, int);
@@ -16,8 +17,16 @@ SharedLibraryNativeState::~SharedLibraryNativeState() {
 }
 
 SharedLibraryNativeState SharedLibraryNativeState::load(const char* name, int mode) {
-  SharedLibraryNativeState state{ dlopen(name, mode) };
-  return state;
+  return SharedLibraryNativeState { dlopen(name, mode) };
+}
+
+ReactNativeWebAssembly::ReactNativeWebAssembly(std::shared_ptr<CallInvoker> jsInvoker)
+  : NativeWebAssemblyCxxSpecJSI(std::move(jsInvoker)) {
+  wasm_rt_init();
+}
+
+ReactNativeWebAssembly::~ReactNativeWebAssembly() {
+  wasm_rt_free();
 }
 
 jsi::Object ReactNativeWebAssembly::getModuleMetadata(jsi::Runtime &rt, jsi::String name) {
@@ -25,7 +34,8 @@ jsi::Object ReactNativeWebAssembly::getModuleMetadata(jsi::Runtime &rt, jsi::Str
 }
 
 jsi::Object ReactNativeWebAssembly::loadModule(jsi::Runtime &rt, jsi::String name) {
-  auto library = std::make_shared<SharedLibraryNativeState>("libwasmexample.dylib", RTLD_LAZY);
+  // TODO: remove hardcoded name, use parameter
+  auto library = std::make_shared<SharedLibraryNativeState>(SharedLibraryNativeState::load("libwasmexample.dylib", RTLD_LAZY));
   
   jsi::Object holder {rt};
   holder.setNativeState(rt, library);
@@ -36,23 +46,27 @@ void ReactNativeWebAssembly::unloadModule(jsi::Runtime &rt, jsi::Object lib) {
   lib.setNativeState(rt, nullptr);
 }
 
-jsi::Object ReactNativeWebAssembly::instantiateModule(jsi::Runtime &rt, jsi::String name, jsi::Object importObject) {
-  wasm_rt_init();
+jsi::Object ReactNativeWebAssembly::createModuleInstance(jsi::Runtime &rt, jsi::Object module, jsi::Object importObject) {
+  auto library = std::dynamic_pointer_cast<SharedLibraryNativeState>(module.getNativeState(rt));
   wasm_rt_memory_t memory;
 
   wasm_rt_allocate_memory(&memory, 1, 1, false);
-//  
-//  auto init = (wasm_function_ptr)dlsym(lib, "wasm2c_example_instantiate");
-//  auto free = (wasm_function_ptr)dlsym(lib, "wasm2c_example_free");
-//  auto fib = (wasm_fib)dlsym(lib, "w2c_example_fib");
+  
+  auto init = library->get<wasm_function_ptr>("wasm2c_example_instantiate");
+  auto free = library->get<wasm_function_ptr>("wasm2c_example_free");
+  auto fib = library->get<wasm_fib>("w2c_example_fib");
 
-  init();
-  fib();
-  free();
-
-  wasm_rt_free();
+  w2c_example inst {};
+  inst.w2c_memory = memory;
+  init(&inst);
+  auto res = fib(&inst, 5);
+  free(&inst);
 
   return jsi::Object {rt};
+}
+
+void ReactNativeWebAssembly::destroyModuleInstance(jsi::Runtime &rt, jsi::Object instance) {
+  instance.setNativeState(rt, nullptr);
 }
 
 }

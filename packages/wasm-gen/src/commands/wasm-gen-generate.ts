@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { fileURLToPath } from 'node:url';
 import { program } from 'commander';
 import consola from 'consola';
 import { glob } from 'glob';
@@ -25,15 +26,28 @@ program.action(async () => {
   console.log('Found project directory', projectRoot);
   const modules = await glob('wasm/*.wasm', { cwd: projectRoot });
   const wasm2c = path.join(waToolkitPath, 'wasm2c');
+  const pathToRuntimeHeader = path.join(
+    fileURLToPath(import.meta.url),
+    '../../..',
+    'assets',
+    'wasm-rt-weak.h'
+  );
 
   for (const mod of modules) {
     console.log('Processing WebAssembly module: ', chalk.bold(mod));
     const name = path.basename(mod, '.wasm');
     const fullInPath = path.join(projectRoot, mod);
-    const outDir = path.join(projectRoot, 'node_modules', '.generated', name);
+    const outDir = path.join(
+      projectRoot,
+      'node_modules',
+      '.generated',
+      '@wasm',
+      name
+    );
     await fs.mkdir(outDir, { recursive: true });
     const fullOutPath = path.join(outDir, `${name}.c`);
     await execa(wasm2c, [fullInPath, '-o', fullOutPath]);
+    await fs.copyFile(pathToRuntimeHeader, path.join(outDir, 'wasm-rt.h'));
   }
 });
 

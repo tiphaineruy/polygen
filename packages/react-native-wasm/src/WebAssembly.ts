@@ -56,9 +56,10 @@ export async function instantiate(
   imports: ImportObject = {}
 ): Promise<Instance> {
   if (source instanceof Module) {
-    return new Instance(source.name, imports);
+    return new Instance(source.nativeHandle, imports);
   } else {
-    return new Instance(getModuleName(source), imports);
+    const module = await compile(source);
+    return new Instance(module.nativeHandle, imports);
   }
 }
 

@@ -1,27 +1,14 @@
 #import "Wasm.h"
+#include <ReactCommon/CxxTurboModuleUtils.h>
 
 @implementation Wasm
-RCT_EXPORT_MODULE()
 
-// Example method
-// See // https://reactnative.dev/docs/native-modules-ios
-RCT_EXPORT_METHOD(multiply:(double)a
-                  b:(double)b
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject)
-{
-    NSNumber *result = @(wasm::multiply(a, b));
-
-    resolve(result);
++ (void)load {
+  facebook::react::registerCxxModuleToGlobalModuleMap(
+  std::string(facebook::react::ReactNativeWebAssembly::kModuleName),
+  [&](std::shared_ptr<facebook::react::CallInvoker> jsInvoker) {
+  return std::make_shared<facebook::react::ReactNativeWebAssembly>(jsInvoker);
+});
 }
-
-// Don't compile this code when we build for the old architecture.
-#ifdef RCT_NEW_ARCH_ENABLED
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
-{
-    return std::make_shared<facebook::react::NativeWasmSpecJSI>(params);
-}
-#endif
 
 @end

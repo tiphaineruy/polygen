@@ -1,3 +1,4 @@
+import 'react-native-wasm/register';
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { multiply } from 'react-native-wasm';
