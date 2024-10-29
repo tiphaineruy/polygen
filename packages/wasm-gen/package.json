@@ -5,8 +5,7 @@
     "main": "lib/index",
     "source": "src/index",
     "bin": {
-        "react-native-wasm": "./build/commands/wasm-gen.js",
-        "react-native-wasm-generate": "./build/commands/wasm-gen-generate.js"
+        "react-native-wasm": "./build/bin/wasm-gen.js"
     },
     "type": "module",
     "files": [
@@ -28,6 +27,7 @@
         "execa": "^9.4.1",
         "find-up": "^7.0.0",
         "glob": "^11.0.0",
+        "liquidjs": "^10.18.0",
         "ora": "^8.1.0"
     },
     "eslintConfig": {

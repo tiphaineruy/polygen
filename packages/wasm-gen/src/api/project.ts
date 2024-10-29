@@ -1,5 +1,6 @@
 import { findUp } from 'find-up';
 import path from 'path';
+import consola from 'consola';
 import { UnknownProjectError } from '../errors.js';
 
 export async function findProjectRoot(
@@ -11,5 +12,8 @@ export async function findProjectRoot(
     throw new UnknownProjectError('Could not locate package.json');
   }
 
-  return path.dirname(packageJsonPath);
+  const projectRoot = path.dirname(packageJsonPath);
+  consola.verbose('Found project directory: ', projectRoot);
+
+  return projectRoot;
 }

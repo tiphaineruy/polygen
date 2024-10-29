@@ -1,0 +1,9 @@
+
+module(
+    name = "react_native_wasm_libs",
+    compatibility_level = 1,
+)
+
+# Rules
+bazel_dep(name = "rules_cc", version = "0.0.10")
+bazel_dep(name = "rules_apple", version = "3.9.2")

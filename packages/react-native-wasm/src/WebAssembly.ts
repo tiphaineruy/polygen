@@ -1,12 +1,7 @@
 import { Module } from './Module';
 import { Instance } from './Instance';
-
-/**
- * Type from WebAssembly HTML Spec
- */
-type BufferSource = ArrayBuffer | ArrayBufferView;
-
-const MAGIC = ['C'.charCodeAt(0), 'K'.charCodeAt(0)];
+import { MAGIC, getModuleName } from './internal';
+import type { BufferSource } from './common';
 
 /**
  * Type representing object with imports
@@ -61,14 +56,4 @@ export async function instantiate(
     const module = await compile(source);
     return new Instance(module.nativeHandle, imports);
   }
-}
-
-function getModuleName(bufferOrView: BufferSource): string {
-  const buffer = ArrayBuffer.isView(bufferOrView)
-    ? (bufferOrView as DataView).buffer
-    : (bufferOrView as ArrayBuffer);
-
-  const nameBuffer = buffer.slice(2); // Skip the CK magic number
-  const decoder = new TextDecoder();
-  return decoder.decode(nameBuffer);
 }

@@ -10,6 +10,9 @@ const root = path.resolve(__dirname, '..', '..');
  * @type {import('metro-config').MetroConfig}
  */
 const config = {
+  resolver: {
+    unstable_enablePackageExports: true,
+  },
   watchFolders: [root],
   transformer: {
     getTransformOptions: async () => ({

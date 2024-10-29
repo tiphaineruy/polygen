@@ -15,6 +15,7 @@ module.exports = {
   dependencies: {
     [pkg.name]: {
       root: path.join(__dirname, '..', '..', 'packages', 'react-native-wasm'),
+      // root: path.join(__dirname, 'wasm', '_generated', '@rn-wasm-host'),
     },
   },
 };

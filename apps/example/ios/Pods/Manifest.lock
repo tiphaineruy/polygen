@@ -1237,27 +1237,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-wasm (0.1.0):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.01.01.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
   - React-nativeconfig (0.75.4)
   - React-NativeModulesApple (0.75.4):
     - glog
@@ -1541,6 +1520,31 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - ReactNativeWebAssembly (0.1.0):
+    - ReactNativeWebAssembly/module (= 0.1.0)
+  - ReactNativeWebAssembly/module (0.1.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - ReactNativeWebAssemblyExample (0.0.1)
+  - ReactNativeWebAssemblyHost (0.0.1)
   - ReactTestApp-DevSupport (3.10.15):
     - React-Core
     - React-jsi
@@ -1586,7 +1590,6 @@ DEPENDENCIES:
   - React-logger (from `../../../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../../../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../../../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
-  - react-native-wasm (from `../../../packages/react-native-wasm`)
   - React-nativeconfig (from `../../../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../../../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../../../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1614,6 +1617,9 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../../../node_modules/react-native/ReactCommon`)
   - "ReactNativeHost (from `../../../node_modules/@rnx-kit/react-native-host`)"
+  - ReactNativeWebAssembly (from `../../../packages/react-native-wasm`)
+  - ReactNativeWebAssemblyExample (from `../wasm/_generated/example`)
+  - "ReactNativeWebAssemblyHost (from `../wasm/_generated/@rn-wasm-host`)"
   - ReactTestApp-DevSupport (from `../../../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
   - Yoga (from `../../../node_modules/react-native/ReactCommon/yoga`)
@@ -1694,8 +1700,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../../../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
-  react-native-wasm:
-    :path: "../../../packages/react-native-wasm"
   React-nativeconfig:
     :path: "../../../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1750,6 +1754,12 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   ReactNativeHost:
     :path: "../../../node_modules/@rnx-kit/react-native-host"
+  ReactNativeWebAssembly:
+    :path: "../../../packages/react-native-wasm"
+  ReactNativeWebAssemblyExample:
+    :path: "../wasm/_generated/example"
+  ReactNativeWebAssemblyHost:
+    :path: "../wasm/_generated/@rn-wasm-host"
   ReactTestApp-DevSupport:
     :path: "../../../node_modules/react-native-test-app"
   ReactTestApp-Resources:
@@ -1793,7 +1803,6 @@ SPEC CHECKSUMS:
   React-logger: d79b704bf215af194f5213a6b7deec50ba8e6a9b
   React-Mapbuffer: b982d5bba94a8bc073bda48f0d27c9b28417fae3
   React-microtasksnativemodule: 2cec1d6e126598df0f165268afa231174dd1a611
-  react-native-wasm: 4d018d80cb9be27364ec08990402b58cbbf9dc94
   React-nativeconfig: 8c83d992b9cc7d75b5abe262069eaeea4349f794
   React-NativeModulesApple: 9f7920224a3b0c7d04d77990067ded14cee3c614
   React-perflogger: 59e1a3182dca2cee7b9f1f7aab204018d46d1914
@@ -1821,11 +1830,14 @@ SPEC CHECKSUMS:
   ReactCodegen: 3982de3211b80e119d9daa9cd6af090d75cb8e90
   ReactCommon: 6a952e50c2a4b694731d7682aaa6c79bc156e4ad
   ReactNativeHost: a27bb5af1c4d73dd3e80cc7ce295407f414e0e8c
+  ReactNativeWebAssembly: 0b43ddd62cd43036d9c2e1df678d3bd7aef34bd2
+  ReactNativeWebAssemblyExample: f17a78210f73b8d678e0d14e9de8212bc2af2794
+  ReactNativeWebAssemblyHost: 8dac4d26d9678c675e935c92ae8787a3e6914ec1
   ReactTestApp-DevSupport: cb1c13fd708e12d8cfe9a8adf4bab85519cec65d
   ReactTestApp-Resources: 7db90c026cccdf40cfa495705ad436ccc4d64154
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 055f92ad73f8c8600a93f0e25ac0b2344c3b07e6
 
-PODFILE CHECKSUM: 2f4a36473b1a193e13b778f537594f98e3b0bd1a
+PODFILE CHECKSUM: 019a87765e86ee42cc5ebcf273f996b835d88ea9
 
 COCOAPODS: 1.15.2

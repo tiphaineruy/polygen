@@ -1,18 +1,31 @@
-import 'react-native-wasm/register';
-import { useState, useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-wasm';
+import WebAssembly from 'react-native-wasm';
+// import { moduleRef } from 'react-native-wasm/react-native';
+import { useState, useCallback } from 'react';
+import { StyleSheet, View, Text, Button } from 'react-native';
 
 export default function App() {
-  const [result, setResult] = useState<number | undefined>();
+  const [module, setModule] = useState<WebAssembly.Module>();
+  const [instance, setInstance] = useState<any>();
 
-  useEffect(() => {
-    multiply(3, 7).then(setResult);
+  const loadModule = useCallback(async () => {
+    setModule(await WebAssembly.compile(WebAssembly.moduleRef('example')));
   }, []);
+
+  const makeInstance = useCallback(async () => {
+    setInstance(await WebAssembly.instantiate(module!));
+  }, [module]);
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Button title="Load module" onPress={loadModule} />
+      <Button
+        title="Create instance"
+        disabled={!module}
+        onPress={makeInstance}
+      />
+      <Text>Module Loaded: {module != null}</Text>
+      <Text>Instance created: {instance != null}</Text>
+      {/*<Text>Result: {result}</Text>*/}
     </View>
   );
 }
