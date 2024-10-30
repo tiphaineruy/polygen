@@ -1,10 +1,10 @@
-import WebAssembly from 'react-native-wasm';
+import WebAssembly from '../../../packages/react-native-wasm/src/index';
 // import { moduleRef } from 'react-native-wasm/react-native';
 import { useState, useCallback } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 
 export default function App() {
-  const [module, setModule] = useState<WebAssembly.Module>();
+  const [module, setModule] = useState<any>();
   const [instance, setInstance] = useState<any>();
 
   const loadModule = useCallback(async () => {
