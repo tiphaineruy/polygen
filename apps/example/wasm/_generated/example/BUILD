@@ -1,4 +1,4 @@
-load("@rules_apple//apple:apple.bzl", "apple_xcframework", "apple_static_xcframework")
+load("@rules_apple//apple:apple.bzl", "apple_xcframework")
 
 cc_library(
   name = "lib",
@@ -6,10 +6,10 @@ cc_library(
   linkstatic = False,
 )
 
-apple_static_xcframework(
+apple_xcframework(
   name = "rn_wasmlib_example",
-#  bundle_id = "org.callstack.react_native_webassembly.wrapper.example",
-#  infoplists = ["Info.plist"],
+  bundle_id = "org.callstack.react_native_webassembly.wrapper.example",
+  infoplists = ["Info.plist"],
   ios = {
     "simulator": ["x86_64", "arm64"],
     "device": ["arm64"]
