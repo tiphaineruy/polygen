@@ -1,0 +1,9 @@
+{% render "header.liquid" %}
+#pragma once
+#include <jsi/jsi.h>
+
+namespace facebook::react {
+
+jsi::Object createWebAssemblyModule(jsi::Runtime &rt, const std::string& name, jsi::Object&& importObject);
+
+}

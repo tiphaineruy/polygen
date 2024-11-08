@@ -3,6 +3,11 @@ import path from 'path';
 import consola from 'consola';
 import { UnknownProjectError } from '../errors.js';
 
+/**
+ * Finds project root that contains a `package.json`.
+ *
+ * @param from
+ */
 export async function findProjectRoot(
   from: string = process.cwd()
 ): Promise<string> {

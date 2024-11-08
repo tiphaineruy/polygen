@@ -25,6 +25,9 @@ export default function App() {
       />
       <Text>Module Loaded: {module != null}</Text>
       <Text>Instance created: {instance != null}</Text>
+      {instance != null && (
+        <Text>Exports: {JSON.stringify(instance.exports)}</Text>
+      )}
       {/*<Text>Result: {result}</Text>*/}
     </View>
   );

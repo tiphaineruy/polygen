@@ -7,6 +7,10 @@
     "paths": {
       "react-native-wasm": ["./src/index"]
     },
+    "typeRoots": [
+      "src/types",
+      "node_modules/@types"
+    ],
     "outDir": "build",
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

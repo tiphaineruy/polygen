@@ -16,7 +16,7 @@ options = {
 
 use_test_app! options do |target|
   target.app do
-    pod 'ReactNativeWebAssemblyExample', :path => "../wasm/_generated/example"
-    pod 'ReactNativeWebAssemblyHost', :path => "../wasm/_generated/@rn-wasm-host"
+    pod 'ReactNativeWebAssemblyHost', :path => "../wasm/_generated/@host"
+    pod 'ReactNativeWASMExample', :path => "../wasm/_generated/example"
   end
 end
