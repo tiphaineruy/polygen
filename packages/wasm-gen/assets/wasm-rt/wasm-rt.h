@@ -508,13 +508,13 @@ typedef struct {
 } wasm_rt_externref_table_t;
 
 /** Initialize the runtime. */
-void wasm_rt_init(void) __attribute__((weak));
+void wasm_rt_init(void);
 
 /** Is the runtime initialized? */
-bool wasm_rt_is_initialized(void) __attribute__((weak)) { return true; }
+bool wasm_rt_is_initialized(void);
 
 /** Free the runtime's state. */
-void wasm_rt_free(void) __attribute__((weak));
+void wasm_rt_free(void);
 
 /*
  * Initialize the multithreaded runtime for a given thread. Must be
@@ -522,12 +522,12 @@ void wasm_rt_free(void) __attribute__((weak));
  * before initializing a Wasm module or calling an exported
  * function.
  */
-void wasm_rt_init_thread(void) __attribute__((weak));
+void wasm_rt_init_thread(void);
 
 /*
  * Free the individual thread's state.
  */
-void wasm_rt_free_thread(void) __attribute__((weak));
+void wasm_rt_free_thread(void);
 
 /** A hardened jmp_buf that allows checking for initialization before use */
 typedef struct {
@@ -586,7 +586,7 @@ const char* wasm_rt_strerror(wasm_rt_trap_t trap);
 void wasm_rt_allocate_memory(wasm_rt_memory_t*,
                              uint64_t initial_pages,
                              uint64_t max_pages,
-                             bool is64) __attribute__((weak)) {}
+                             bool is64);
 
 /**
  * Grow a Memory object by `pages`, and return the previous page count. If
@@ -603,17 +603,17 @@ void wasm_rt_allocate_memory(wasm_rt_memory_t*,
  *    }
  *  ```
  */
-uint64_t wasm_rt_grow_memory(wasm_rt_memory_t*, uint64_t pages) __attribute__((weak)) {}
+uint64_t wasm_rt_grow_memory(wasm_rt_memory_t*, uint64_t pages);
 
 /** Free a Memory object. */
-void wasm_rt_free_memory(wasm_rt_memory_t*) __attribute__((weak)) {}
+void wasm_rt_free_memory(wasm_rt_memory_t*);
 
 #ifdef WASM_RT_C11_AVAILABLE
 /** Shared memory version of wasm_rt_allocate_memory */
 void wasm_rt_allocate_memory_shared(wasm_rt_shared_memory_t*,
                                     uint64_t initial_pages,
                                     uint64_t max_pages,
-                                    bool is64) {}
+                                    bool is64);
 
 /** Shared memory version of wasm_rt_grow_memory */
 uint64_t wasm_rt_grow_memory_shared(wasm_rt_shared_memory_t*, uint64_t pages);
@@ -634,10 +634,10 @@ void wasm_rt_free_memory_shared(wasm_rt_shared_memory_t*);
  */
 void wasm_rt_allocate_funcref_table(wasm_rt_funcref_table_t*,
                                     uint32_t elements,
-                                    uint32_t max_elements) __attribute__((weak));
+                                    uint32_t max_elements);
 
 /** Free a funcref Table object. */
-void wasm_rt_free_funcref_table(wasm_rt_funcref_table_t*) __attribute__((weak));
+void wasm_rt_free_funcref_table(wasm_rt_funcref_table_t*);
 
 /**
  * Initialize an externref Table object with an element count

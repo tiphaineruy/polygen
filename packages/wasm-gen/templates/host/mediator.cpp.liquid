@@ -1,0 +1,18 @@
+{% render "header.liquid" %}
+#pragma once
+#include "mediator.h"
+
+namespace facebook::react {
+
+{% for generatedModule in generatedModules %}
+jsi::Object create{{ generatedModule.name | capitalize }}Exports(jsi::Runtime &rt, jsi::Object&& importObject);
+{% endfor %}
+
+jsi::Object createWebAssemblyModule(jsi::Runtime &rt, const std::string& name, jsi::Object&& importObject) {
+{% for generatedModule in generatedModules %}
+  if (name == "{{ generatedModule.name }}") { return create{{ generatedModule.name | capitalize }}Exports(rt, std::move(importObject)); };
+{% endfor %}
+  return jsi::Object {rt};
+}
+
+}

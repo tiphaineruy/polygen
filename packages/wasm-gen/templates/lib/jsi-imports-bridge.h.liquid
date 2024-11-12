@@ -1,0 +1,33 @@
+{% render "header.liquid" %}
+#pragma once
+#include <jsi/jsi.h>
+#include "{{ moduleName }}.h"
+
+{% for importedModuleName in importModuleNames %}
+struct w2c_{{ importedModuleName | escape_module_name }} {
+  {{ moduleContextCTypeName }}* root;
+  facebook::jsi::Runtime& rt;
+  facebook::jsi::Object importObj;
+};
+{% endfor %}
+
+namespace facebook::react {
+
+class {{ moduleSafeName | capitalize }}ModuleContext: public jsi::NativeState {
+public:
+  {{ moduleSafeName | capitalize }}ModuleContext(jsi::Runtime& rt, jsi::Object&& importObject)
+    : importObject(std::move(importObject))
+      {% for importedModuleName in importModuleNames -%}
+      , {{ importedModuleName | escape_module_name }}Ctx{&rootCtx, rt, this->importObject.getPropertyAsObject(rt, "{{ importedModuleName }}")}
+      {%- unless forloop.last %},{% endunless %}
+      {% endfor %}
+  {}
+
+  jsi::Object importObject;
+  {{ moduleContextCTypeName }} rootCtx;
+  {% for importedModuleName in importModuleNames -%}
+  w2c_{{ importedModuleName | escape_module_name }} {{ importedModuleName | escape_module_name }}Ctx;
+  {% endfor %}
+};
+
+}

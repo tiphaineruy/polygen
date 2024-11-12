@@ -3,12 +3,13 @@ import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 import consola from 'consola';
 import { glob } from 'glob';
-import { execa } from 'execa';
-import fs from 'node:fs/promises';
+import { oraPromise } from 'ora';
 import chalk from 'chalk';
 import path from 'path';
-import { Liquid } from 'liquidjs';
 import { findProjectRoot } from '../api/project.js';
+import { WasmModule } from '../webassembly/module.js';
+import { W2CGenerator } from '../w2c/generator.js';
+import { W2CModule } from '../w2c/module.js';
 
 const command = new Command('generate').description(
   'Generates React Native Modules from Wasm'
@@ -19,52 +20,56 @@ const ASSETS_DIR = path.join(ROOT_DIR, 'assets');
 const TEMPLATES_DIR = path.join(ROOT_DIR, 'templates');
 
 command.action(async () => {
-  const waToolkitPath = process.env.WABT_PATH;
-  if (!waToolkitPath) {
-    consola.error(
-      'WABT_PATH environment variable is not set. Set it to a directory containing WABT toolkit'
-    );
-    return;
-  }
-
-  const engine = new Liquid({
-    root: TEMPLATES_DIR,
-  });
-
   const projectRoot = await findProjectRoot();
   const generatedDir = path.join(projectRoot, 'wasm/_generated');
 
-  const modules = await glob('wasm/*.wasm', { cwd: projectRoot });
-  const wasm2c = path.join(waToolkitPath, 'wasm2c');
-  const pathToRuntimeHeader = path.join(ASSETS_DIR, 'wasm-rt-weak.h');
+  const w2cGenerator = new W2CGenerator({
+    assetsDirectory: ASSETS_DIR,
+    templateDirectory: TEMPLATES_DIR,
+    outputDirectory: generatedDir,
+  });
 
-  const hostOutputDir = path.join(generatedDir, `@rn-wasm-host`);
-  await fs.mkdir(hostOutputDir, { recursive: true });
+  const modules = await glob('wasm/*.wasm', { cwd: projectRoot });
+  // const pathToRuntimeHeader = path.join(ASSETS_DIR, 'wasm-rt-weak.h');
+
+  consola.info('Found', chalk.bold(modules.length), 'WebAssembly module(s)');
+  const generatedModules: W2CModule[] = [];
 
   for (const mod of modules) {
-    console.log('Processing WebAssembly module: ', chalk.bold(mod));
-    const name = path.basename(mod, '.wasm');
-    const fullInPath = path.join(projectRoot, mod);
+    // const fullInPath = path.join(projectRoot, mod);
 
-    const libOutputDir = path.join(generatedDir, name);
-    await fs.mkdir(libOutputDir, { recursive: true });
+    // const libOutputDir = path.join(generatedDir, name);
+    // await fs.mkdir(libOutputDir, { recursive: true });
 
-    const fullOutPath = path.join(libOutputDir, `${name}.c`);
-    await execa(wasm2c, [fullInPath, '-o', fullOutPath]);
-    await fs.copyFile(
-      pathToRuntimeHeader,
-      path.join(libOutputDir, 'wasm-rt.h')
+    // const fullOutPath = path.join(libOutputDir, `${name}.c`);
+    // await fs.copyFile(
+    //   pathToRuntimeHeader,
+    //   path.join(libOutputDir, 'wasm-rt.h')
+    // );
+
+    const parsedModule = await oraPromise(
+      WasmModule.fromWASM(mod),
+      `Loading ${chalk.bold(mod)} metadata`
     );
 
-    const buildFile = await engine.renderFile('BUILD.bazel.liquid', {
-      name,
-    });
-    await fs.writeFile(path.join(libOutputDir, 'BUILD'), buildFile);
-    await fs.copyFile(
-      path.join(ASSETS_DIR, 'Info.plist'),
-      path.join(libOutputDir, 'Info.plist')
-    );
+    // await oraPromise(
+    //   async () => {
+    generatedModules.push(await w2cGenerator.generateModule(parsedModule));
+    // },
+    // `Processing ${chalk.bold(mod)} module`
+    // );
+
+    // const buildFile = await engine.renderFile('BUILD.bazel.liquid', {
+    //   name,
+    // });
+    // await fs.writeFile(path.join(libOutputDir, 'BUILD'), buildFile);
+    // await fs.copyFile(
+    //   path.join(ASSETS_DIR, 'Info.plist'),
+    //   path.join(libOutputDir, 'Info.plist')
+    // );
   }
+
+  await w2cGenerator.generateHostModule(generatedModules);
 });
 
 export default command;
