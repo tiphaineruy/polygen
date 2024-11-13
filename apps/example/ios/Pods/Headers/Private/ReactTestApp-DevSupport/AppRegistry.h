@@ -1,1 +1,0 @@
-../../../../../../../node_modules/react-native-test-app/common/AppRegistry.h

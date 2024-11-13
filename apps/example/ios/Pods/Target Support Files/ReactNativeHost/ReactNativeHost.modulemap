@@ -1,6 +1,0 @@
-module ReactNativeHost {
-  umbrella header "ReactNativeHost-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -1,6 +1,0 @@
-module ReactTestApp_DevSupport {
-  umbrella header "ReactTestApp-DevSupport-umbrella.h"
-
-  export *
-  module * { export * }
-}
