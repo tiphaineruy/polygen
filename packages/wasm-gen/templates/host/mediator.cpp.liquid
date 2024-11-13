@@ -2,17 +2,25 @@
 #pragma once
 #include "mediator.h"
 
+const std::vector<std::string> module_names {
+  {% for generatedModule in generatedModules %}
+    "{{ generatedModule.name }}"{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+};
+
 namespace facebook::react {
 
 {% for generatedModule in generatedModules %}
-jsi::Object create{{ generatedModule.name | capitalize }}Exports(jsi::Runtime &rt, jsi::Object&& importObject);
+std::unique_ptr<Module>&& create{{ generatedModule.name | capitalize }}Module();
 {% endfor %}
 
-jsi::Object createWebAssemblyModule(jsi::Runtime &rt, const std::string& name, jsi::Object&& importObject) {
+std::unique_ptr<Module>&& loadWebAssemblyModule(const std::string& name) {
 {% for generatedModule in generatedModules %}
-  if (name == "{{ generatedModule.name }}") { return create{{ generatedModule.name | capitalize }}Exports(rt, std::move(importObject)); };
+  if (name == "{{ generatedModule.name }}") {
+    return create{{ generatedModule.name | capitalize }}Module();
+  }
 {% endfor %}
-  return jsi::Object {rt};
+  return nullptr;
 }
 
 }

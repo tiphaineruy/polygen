@@ -1,14 +1,18 @@
-{% render "header.liquid" %}
 #pragma once
+
 #include <memory>
 #include <string>
 #include <vector>
 #include <jsi/jsi.h>
-#include <ReactNativeWebAssembly/Module.h>
+#include "Module.h"
+
+const std::vector<std::string> names {
+  "a", "b"
+};
 
 namespace facebook::react {
 
 const std::vector<std::string>& getAvailableModules();
 std::unique_ptr<Module>&& loadWebAssemblyModule(const std::string& name);
-{% comment %}jsi::Object createWebAssemblyModule(jsi::Runtime &rt, const std::string& name, jsi::Object&& importObject);{% endcomment %}
+
 }

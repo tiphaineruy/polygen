@@ -23,7 +23,7 @@ std::shared_ptr<{{ ctx_class }}> tryGetContext(jsi::Runtime& rt, const jsi::Obje
   return std::dynamic_pointer_cast<{{ ctx_class }}>(obj.getNativeState(rt));
 }
 
-jsi::Object create{{ moduleSafeName | capitalize }}Exports(jsi::Runtime &rt, jsi::Object&& importObject) {
+jsi::Object&& create{{ moduleSafeName | capitalize }}Exports(jsi::Runtime &rt, jsi::Object&& importObject) {
   jsi::Object mod { rt };
 
   if (!wasm_rt_is_initialized()) {
@@ -70,7 +70,7 @@ jsi::Object create{{ moduleSafeName | capitalize }}Exports(jsi::Runtime &rt, jsi
   mod.setProperty(rt, "exports", std::move(exports));
 
   // end full exports
-  return mod;
+  return std::move(mod);
 }
 
 }

@@ -6,6 +6,6 @@ namespace facebook::react {
 {%- capture ctx_class %}{{ moduleSafeName | capitalize }}ModuleContext{% endcapture %}
 {%- capture turbo_module_name %}ReactNative{{ moduleSafeName | capitalize }}{% endcapture %}
 
-jsi::Object create{{ moduleSafeName | capitalize }}Exports(jsi::Runtime &rt, jsi::Object&& importObject);
+jsi::Object&& create{{ moduleSafeName | capitalize }}Exports(jsi::Runtime &rt, jsi::Object&& importObject);
 
 }

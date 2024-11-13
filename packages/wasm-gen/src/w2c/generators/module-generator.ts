@@ -46,6 +46,7 @@ export class ModuleGenerator extends BaseGenerator<ModuleTemplateContext> {
         this.generateCSource(),
         this.renderImportsBridge(),
         this.renderExportsBridge(),
+        this.renderStaticModule(),
         // this.renderMetadata(),
       ]);
     } catch (e) {
@@ -82,6 +83,13 @@ export class ModuleGenerator extends BaseGenerator<ModuleTemplateContext> {
     return await this.renderAllTo({
       'lib/jsi-exports-bridge.h': 'jsi-exports-bridge.h',
       'lib/jsi-exports-bridge.cpp': 'jsi-exports-bridge.cpp',
+    });
+  }
+
+  public async renderStaticModule() {
+    return await this.renderAllTo({
+      'lib/static-module.h': 'static-module.h',
+      'lib/static-module.cpp': 'static-module.cpp',
     });
   }
 

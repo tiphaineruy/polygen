@@ -1,0 +1,39 @@
+{% render "header.liquid" %}
+#pragma once
+#include "static-module.h"
+#include "jsi-exports-bridge.h"
+
+
+namespace facebook::react {
+
+const std::vector<Module::ImportInfo> imports {
+  {% for f in importedFunctions %}
+  {"{{ f.module }}", "{{ f.name }}", Module::SymbolKind::Function}{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+};
+
+const std::vector<Module::ExportInfo> exports {
+  {% for f in exportedFunctions %}
+    {"{{ f.name }}", Module::SymbolKind::Function}{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+};
+
+{%- capture className %}WASM{{ moduleSafeName | capitalize }}Module{% endcapture %}
+
+std::unique_ptr<Module>&& create{{ moduleSafeName | capitalize }}Module() {
+    return std::make_unique<{{ className }}>("{{ moduleName }}");
+}
+
+const std::vector<Module::ImportInfo>& {{ className }}::getImports() const {
+  return imports;
+}
+
+const std::vector<Module::ExportInfo>& {{ className }}::getExports() const {
+  return exports;
+}
+
+jsi::Object&& {{ className }}::createInstance(jsi::Runtime& rt, jsi::Object&& importObject) const {
+  return create{{ moduleSafeName | capitalize }}Exports(rt, std::move(importObject));
+}
+
+}

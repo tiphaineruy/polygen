@@ -1,0 +1,19 @@
+{% render "header.liquid" %}
+#pragma once
+#include <ReactNativeWebAssembly/StaticLibraryModule.h>
+
+namespace facebook::react {
+
+{%- capture className %}WASM{{ moduleSafeName | capitalize }}Module{% endcapture %}
+
+std::unique_ptr<Module>&& create{{ moduleSafeName | capitalize }}Module();
+
+class {{ className }}: public StaticLibraryModule {
+public:
+  {{ className }}(const std::string& name): StaticLibraryModule(name) {}
+  const std::vector<ImportInfo>& getImports() const override;
+  const std::vector<ExportInfo>& getExports() const override;
+  jsi::Object&& createInstance(jsi::Runtime& rt, jsi::Object&& importObject) const override;
+};
+
+}
