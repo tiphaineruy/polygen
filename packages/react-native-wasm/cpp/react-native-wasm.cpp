@@ -15,14 +15,29 @@ ReactNativeWebAssembly::~ReactNativeWebAssembly() {
   wasm_rt_free();
 }
 
+
+jsi::Object ReactNativeWebAssembly::loadModule(jsi::Runtime &rt, jsi::String name) {
+  auto mod = loadWebAssemblyModule(std::move(name.utf8(rt)));
+  auto moduleWrapper = std::make_shared<ModuleNativeState>(std::move(mod));
+  
+  jsi::Object holder {rt};
+  holder.setNativeState(rt, moduleWrapper);
+  return holder;
+}
+
+void ReactNativeWebAssembly::unloadModule(jsi::Runtime &rt, jsi::Object module) {
+  module.setNativeState(rt, nullptr);
+}
+
 jsi::Object ReactNativeWebAssembly::getModuleMetadata(jsi::Runtime &rt, jsi::Object moduleHolder) {
   auto moduleWrapper = std::dynamic_pointer_cast<ModuleNativeState>(moduleHolder.getNativeState(rt));
   if (moduleWrapper == nullptr) {
     throw new jsi::JSError(rt, "Argument passed to createModuleInstance is not a loaded module or it was unloaded (missing native state)");
   }
   
-  auto imports = moduleWrapper->getModule().getImports();
-  auto exports = moduleWrapper->getModule().getExports();
+  auto& mod = moduleWrapper->getModule();
+  auto imports = mod.getImports();
+  auto exports = mod.getExports();
   auto resultObj = jsi::Object {rt};
   auto importsArray = jsi::Array {rt, imports.size()};
   auto exportsArray = jsi::Array {rt, exports.size()};
@@ -47,19 +62,6 @@ jsi::Object ReactNativeWebAssembly::getModuleMetadata(jsi::Runtime &rt, jsi::Obj
   resultObj.setProperty(rt, "imports", std::move(importsArray));
   resultObj.setProperty(rt, "exports ", std::move(exportsArray));
   return resultObj;
-}
-
-jsi::Object ReactNativeWebAssembly::loadModule(jsi::Runtime &rt, jsi::String name) {
-  auto&& mod = loadWebAssemblyModule(std::move(name.utf8(rt)));
-  auto moduleWrapper = std::make_shared<ModuleNativeState>(std::move(mod));
-  
-  jsi::Object holder {rt};
-  holder.setNativeState(rt, moduleWrapper);
-  return holder;
-}
-
-void ReactNativeWebAssembly::unloadModule(jsi::Runtime &rt, jsi::Object module) {
-  module.setNativeState(rt, nullptr);
 }
 
 jsi::Object ReactNativeWebAssembly::createModuleInstance(jsi::Runtime &rt, jsi::Object module, jsi::Object importObject) {

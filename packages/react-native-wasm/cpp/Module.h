@@ -50,7 +50,7 @@ public:
   
   virtual const std::vector<ImportInfo>& getImports() const = 0;
   virtual const std::vector<ExportInfo>& getExports() const = 0;
-  virtual jsi::Object&& createInstance(jsi::Runtime& rt, jsi::Object&& importObject) const = 0;
+  virtual jsi::Object createInstance(jsi::Runtime& rt, jsi::Object&& importObject) const = 0;
   
 protected:
   std::string name_;

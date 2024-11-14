@@ -1521,8 +1521,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - ReactNativeWebAssembly (0.1.0):
-    - ReactNativeWebAssembly/module (= 0.1.0)
-  - ReactNativeWebAssembly/module (0.1.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1544,7 +1542,26 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - ReactNativeWebAssemblyHost (0.0.1):
-    - ReactNativeWebAssembly
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - ReactTestApp-DevSupport (3.10.15):
     - React-Core
     - React-jsi
@@ -1827,8 +1844,8 @@ SPEC CHECKSUMS:
   ReactCodegen: 3982de3211b80e119d9daa9cd6af090d75cb8e90
   ReactCommon: 6a952e50c2a4b694731d7682aaa6c79bc156e4ad
   ReactNativeHost: a27bb5af1c4d73dd3e80cc7ce295407f414e0e8c
-  ReactNativeWebAssembly: 0b43ddd62cd43036d9c2e1df678d3bd7aef34bd2
-  ReactNativeWebAssemblyHost: 919f3b31e5771a10073b925b8bee90ebe249831c
+  ReactNativeWebAssembly: 5c4293cc6960c23a70e80b7b2dd75fc104f27c2f
+  ReactNativeWebAssemblyHost: ac1a79737a93ba3bcd87b533fc0838a3bf22db37
   ReactTestApp-DevSupport: cb1c13fd708e12d8cfe9a8adf4bab85519cec65d
   ReactTestApp-Resources: 7db90c026cccdf40cfa495705ad436ccc4d64154
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d

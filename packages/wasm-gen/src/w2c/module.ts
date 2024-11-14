@@ -15,7 +15,9 @@ export interface AugmentedImportedFunction extends ModuleImportFuncInfo {
 }
 
 export interface CFunctionInfo extends ModuleExportFuncInfo {
-  generated_c_function_name: string;
+  returnType: string;
+  hasReturn: boolean;
+  generatedCFunctionName: string;
 }
 
 export class W2CModule {
@@ -69,9 +71,23 @@ export class W2CModule {
    * @param exportedFunction
    */
   getCFunctionFor(exportedFunction: ModuleExportInfo): CFunctionInfo {
+    function matchW2CRType(t?: TypeName) {
+      if (!t) {
+        return 'void';
+      }
+
+      if (t.startsWith('u') || t.startsWith('i')) {
+        return 'u32';
+      }
+      return 'f64';
+    }
+
+    const returnType = matchW2CRType(exportedFunction.results[0]);
     return {
       ...exportedFunction,
-      generated_c_function_name: `w2c_${this.escapedName}_${escapeExportName(exportedFunction.name)}`,
+      returnType,
+      hasReturn: exportedFunction.results.length > 0,
+      generatedCFunctionName: `w2c_${this.escapedName}_${escapeExportName(exportedFunction.name)}`,
     };
   }
 }

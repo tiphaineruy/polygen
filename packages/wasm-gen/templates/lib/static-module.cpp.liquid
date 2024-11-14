@@ -20,7 +20,7 @@ const std::vector<Module::ExportInfo> exports {
 
 {%- capture className %}WASM{{ moduleSafeName | capitalize }}Module{% endcapture %}
 
-std::unique_ptr<Module>&& create{{ moduleSafeName | capitalize }}Module() {
+std::unique_ptr<Module> create{{ moduleSafeName | capitalize }}Module() {
     return std::make_unique<{{ className }}>("{{ moduleName }}");
 }
 
@@ -32,7 +32,7 @@ const std::vector<Module::ExportInfo>& {{ className }}::getExports() const {
   return exports;
 }
 
-jsi::Object&& {{ className }}::createInstance(jsi::Runtime& rt, jsi::Object&& importObject) const {
+jsi::Object {{ className }}::createInstance(jsi::Runtime& rt, jsi::Object&& importObject) const {
   return create{{ moduleSafeName | capitalize }}Exports(rt, std::move(importObject));
 }
 
