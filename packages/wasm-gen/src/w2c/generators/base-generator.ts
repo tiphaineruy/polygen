@@ -43,6 +43,17 @@ export abstract class BaseGenerator<TContext extends object> {
     await Promise.allSettled(promises);
   }
 
+  /**
+   * Helper method that generates specified files only when the source files
+   * are newer than output files, which suggest that the output files are outdated.
+   *
+   * The comparison is done basing on `modified_time` attribute of every file.
+   *
+   * @param sources List of input files
+   * @param outputs List of output files
+   * @param cb Callback that generates the output files
+   * @protected
+   */
   protected async generating<R>(
     sources: string[],
     outputs: string[],

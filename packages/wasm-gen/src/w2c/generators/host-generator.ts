@@ -43,6 +43,7 @@ export class HostGenerator extends BaseGenerator<HostTemplateContext> {
     await this.renderAllTo({
       'host/mediator.h': 'mediator.h',
       'host/mediator.cpp': 'mediator.cpp',
+      'host/Host.podspec': 'ReactNativeWebAssemblyHost.podspec',
     });
   }
 }

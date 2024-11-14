@@ -55,7 +55,7 @@ export class ModuleGenerator extends BaseGenerator<ModuleTemplateContext> {
 
   public async generateCSource() {
     // TODO: generate only if needed (check mod time)
-    const outputPath = this.outputPathTo('gen', this.module.name);
+    const outputPath = this.outputPathTo(this.module.name);
     // const generatedFiles = [`${outputPath}.c`, `${outputPath}.h`];
 
     // return this.generatingFromModule(generatedFiles, () => {
@@ -73,15 +73,15 @@ export class ModuleGenerator extends BaseGenerator<ModuleTemplateContext> {
 
   public async renderImportsBridge() {
     return await this.renderAllTo({
-      'lib/jsi-imports-bridge.h': 'gen/jsi-imports-bridge.h',
-      'lib/jsi-imports-bridge.cpp': 'gen/jsi-imports-bridge.cpp',
+      'lib/jsi-imports-bridge.h': 'jsi-imports-bridge.h',
+      'lib/jsi-imports-bridge.cpp': 'jsi-imports-bridge.cpp',
     });
   }
 
   public async renderExportsBridge() {
     return await this.renderAllTo({
-      'lib/jsi-exports-bridge.h': 'gen/jsi-exports-bridge.h',
-      'lib/jsi-exports-bridge.cpp': 'gen/jsi-exports-bridge.cpp',
+      'lib/jsi-exports-bridge.h': 'jsi-exports-bridge.h',
+      'lib/jsi-exports-bridge.cpp': 'jsi-exports-bridge.cpp',
     });
   }
 

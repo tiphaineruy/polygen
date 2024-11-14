@@ -27,6 +27,7 @@ command.action(async () => {
     assetsDirectory: ASSETS_DIR,
     templateDirectory: TEMPLATES_DIR,
     outputDirectory: generatedDir,
+    singleProject: true,
   });
 
   const modules = await glob('wasm/*.wasm', { cwd: projectRoot });
