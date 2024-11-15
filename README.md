@@ -1,6 +1,6 @@
 # react-native-wasm
 
-React Native Module for running WebAssembly modules without interpretng.
+React Native Module for running WebAssembly modules statically without interpreting.
 
 ## Installation
 
