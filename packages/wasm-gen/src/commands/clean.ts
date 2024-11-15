@@ -7,13 +7,16 @@ import { findProjectRoot } from '../api/project.js';
 import chalk from 'chalk';
 import consola from 'consola';
 
+// TODO: move to project info
+const GENERATED_DIR = 'wasm/_generated';
+
 const command = new Command('clean')
   .description('Cleans all WASM generated output files')
   .option('-y, --yes', 'Remove files without confirmation');
 
 command.action(async (options) => {
   const projectRoot = await findProjectRoot();
-  const generatedPath = path.join(projectRoot, 'wasm/_generated');
+  const generatedPath = path.join(projectRoot, GENERATED_DIR);
 
   let confirmed = options.yes;
 
@@ -33,7 +36,7 @@ command.action(async (options) => {
 
   await oraPromise(
     fs.rm(generatedPath, { recursive: true }),
-    `Removing ${chalk.bold('wasm/_generated')}`
+    `Removing ${chalk.bold(GENERATED_DIR)}`
   );
 
   consola.success('Generated files removed!');
