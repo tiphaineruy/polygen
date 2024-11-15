@@ -71,7 +71,7 @@ export type OpaqueModuleNativeHandle = UnsafeObject;
 export type OpaqueModuleInstanceNativeHandle = UnsafeObject;
 
 export interface Spec extends TurboModule {
-  getModuleMetadata(name: string): InternalModuleMetadata;
+  getModuleMetadata(module: OpaqueModuleNativeHandle): InternalModuleMetadata;
   loadModule(name: string): OpaqueModuleNativeHandle;
   unloadModule(module: OpaqueModuleNativeHandle): void;
 

@@ -10,8 +10,11 @@ export class Instance {
   // @ts-ignore
   #imports: ImportObject;
 
+  public exports: any;
+
   constructor(module: OpaqueModuleNativeHandle, imports: ImportObject) {
     this.#imports = imports;
-    this.#nativeHandle = NativeWASM.createModuleInstance(module, imports);
+    const instance = NativeWASM.createModuleInstance(module, imports) as any;
+    this.exports = instance.exports;
   }
 }

@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => package["repository"]["url"], :tag => "#{s.version}" }
 
   s.platforms    = { :ios => min_ios_version_supported }
-  s.source_files = "*.{h,m,mm}", "*.{hpp,cpp,c,h}", "wasm-rt/*.{h,m,mm,cpp,c}"
+  s.source_files = "*.{h,hpp,c,cpp}", "*/*.{h,hpp,c,cpp}"
 
 # 	s.prepare_command = <<-CMD
 # 		bazel build
