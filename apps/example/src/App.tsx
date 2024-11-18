@@ -1,7 +1,8 @@
-import WebAssembly from '../../../packages/react-native-wasm/src/index';
-// import { moduleRef } from 'react-native-wasm/react-native';
+import { register, WebAssembly, moduleRef } from 'react-native-wasm';
 import { useState, useCallback, useMemo } from 'react';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+
+register();
 
 const imports = {
   host: {
@@ -18,11 +19,20 @@ export default function App() {
   const numberText = useMemo(() => number.toString(), [number]);
 
   const loadModule = useCallback(async () => {
-    setModule(await WebAssembly.compile(WebAssembly.moduleRef('example')));
+    setModule(await WebAssembly.compile(moduleRef('example')));
   }, []);
 
   const makeInstance = useCallback(async () => {
-    setInstance(await WebAssembly.instantiate(module!, imports));
+    const inst = await WebAssembly.instantiate(module!, imports);
+    setInstance(inst);
+    console.log('memory: ', inst.exports.memory);
+    console.log('memory.grow: ', inst.exports.memory.grow);
+    const buffer = inst.exports.memory.buffer;
+    console.log('memory.buffer:', buffer);
+    console.log('memory.buffer.isView: ', buffer.isView);
+    console.log('memory.buffer.byteLength: ', buffer.byteLength);
+    console.log('memory.buffer.resizable: ', buffer.resizable);
+    console.log('memory.buffer.detached: ', buffer.detached);
   }, [module]);
 
   const onNumberChanged = useCallback(
@@ -35,7 +45,6 @@ export default function App() {
   );
 
   const compute = useCallback(() => {
-    // console.log('fib(2):');
     setResult(instance.exports.fib(number));
   }, [number, instance, setResult]);
 

@@ -2,7 +2,6 @@ import * as path from 'node:path';
 import { escapeExportName, escapeModuleName } from './utils.js';
 import type {
   ModuleExportFuncInfo,
-  ModuleExportInfo,
   ModuleImportFuncInfo,
   WasmModule,
 } from '../webassembly/module.js';
@@ -41,6 +40,13 @@ export class W2CModule {
   }
 
   /**
+   * Creates a generators that yields all exported memories.
+   */
+  *getExportedMemories() {
+    yield* this.wasmModule.getExportedMemories();
+  }
+
+  /**
    * Creates a generators that yields all exported functions.
    */
   *getImportedFunctions(): Generator<AugmentedImportedFunction> {
@@ -70,7 +76,7 @@ export class W2CModule {
   /**
    * @param exportedFunction
    */
-  getCFunctionFor(exportedFunction: ModuleExportInfo): CFunctionInfo {
+  getCFunctionFor(exportedFunction: ModuleExportFuncInfo): CFunctionInfo {
     function matchW2CRType(t?: TypeName) {
       if (!t) {
         return 'void';

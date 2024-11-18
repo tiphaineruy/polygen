@@ -3,6 +3,7 @@ import { TurboModuleRegistry } from 'react-native';
 import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 
 export type NativeImportObject = UnsafeObject;
+export type UnsafeArrayBuffer = UnsafeObject;
 
 /**
  * @spec https://webassembly.github.io/spec/js-api/index.html#modules
@@ -67,19 +68,39 @@ export interface InternalModuleMetadata {
   readonly exports: ModuleExportDescriptor[];
 }
 
+/**
+ * Opaque handle representing WebAssembly Module.
+ */
 export type OpaqueModuleNativeHandle = UnsafeObject;
+
+/**
+ * Opaque handle representing WebAssembly Module instance.
+ */
 export type OpaqueModuleInstanceNativeHandle = UnsafeObject;
 
+/**
+ * Opaque handle representing WebAssembly memory.
+ */
+export type OpaqueMemoryNativeHandle = UnsafeObject;
+
 export interface Spec extends TurboModule {
-  getModuleMetadata(module: OpaqueModuleNativeHandle): InternalModuleMetadata;
+  // Modules
   loadModule(name: string): OpaqueModuleNativeHandle;
   unloadModule(module: OpaqueModuleNativeHandle): void;
+  getModuleMetadata(module: OpaqueModuleNativeHandle): InternalModuleMetadata;
 
+  // Module instances
   createModuleInstance(
     mod: OpaqueModuleNativeHandle,
     importObject: NativeImportObject
   ): OpaqueModuleInstanceNativeHandle;
   destroyModuleInstance(instance: OpaqueModuleInstanceNativeHandle): void;
+
+  // Memory
+  createMemory(initial: number, maximum?: number): OpaqueMemoryNativeHandle;
+  destroyMemory(instance: OpaqueMemoryNativeHandle): void;
+  getMemoryBuffer(instance: OpaqueMemoryNativeHandle): UnsafeArrayBuffer;
+  growMemory(instance: OpaqueMemoryNativeHandle, delta: number): void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('WebAssembly');

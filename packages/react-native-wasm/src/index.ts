@@ -1,11 +1,10 @@
 import { Module } from './Module';
 import { Instance } from './Instance';
+import { makeModuleName } from './internal';
 
 import { compile, instantiate, validate } from './WebAssembly';
-import { moduleRef } from './react-native';
 
 const impl = {
-  moduleRef,
   compile,
   instantiate,
   validate,
@@ -15,4 +14,18 @@ const impl = {
 
 export type Schema = typeof impl;
 
-export default impl;
+export function register() {
+  // @ts-ignore
+  global.WebAssembly = Object.freeze(impl) as any;
+}
+
+export const WebAssembly = impl;
+
+/**
+ * Allows to reference a module by its name.
+ *
+ * @param name
+ */
+export function moduleRef(name: string): ArrayBuffer {
+  return makeModuleName(name);
+}
