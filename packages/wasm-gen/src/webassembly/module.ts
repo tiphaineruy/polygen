@@ -142,7 +142,7 @@ export class WasmModule {
           results: sig.results,
         };
       } else if (field.descr.exportType === 'Memory') {
-        return {
+        yield {
           name: field.name,
           type: 'mem',
         };
