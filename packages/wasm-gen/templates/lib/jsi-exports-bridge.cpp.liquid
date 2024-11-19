@@ -49,7 +49,7 @@ jsi::Object create{{ moduleSafeName | capitalize }}Exports(jsi::Runtime &rt, jsi
   /* exported memory: '{{ export.name }}' */
   {
     jsi::Object holder {rt};
-    auto memory = std::make_unique<Memory>(w2c_example_{{ export.name | escape_export_name }}(&inst->rootCtx));
+    auto memory = std::make_unique<Memory>(w2c_{{ moduleSafeName }}_{{ export.name | escape_export_name }}(&inst->rootCtx));
     holder.setNativeState(rt, std::make_shared<MemoryNativeState>(std::move(memory)));
     memories.setProperty(rt, "{{ export.name }}", std::move(holder));
   }
