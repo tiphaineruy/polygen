@@ -133,7 +133,6 @@ export class WasmModule {
 
         if (!sig) {
           console.warn(`Could not find export signature for: ${field.name}`);
-          console.info(field.descr);
           continue;
         }
 
