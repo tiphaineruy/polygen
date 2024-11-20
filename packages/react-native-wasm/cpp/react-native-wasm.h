@@ -12,20 +12,18 @@ public:
 
   explicit ReactNativeWebAssembly(std::shared_ptr<CallInvoker> jsInvoker);
   virtual ~ReactNativeWebAssembly();
-  
+
   jsi::Object loadModule(jsi::Runtime &rt, jsi::String name) override;
   void unloadModule(jsi::Runtime &rt, jsi::Object lib) override;
   jsi::Object getModuleMetadata(jsi::Runtime &rt, jsi::Object moduleHolder) override;
-  
+
   jsi::Object createModuleInstance(jsi::Runtime &rt, jsi::Object moduleHolder, jsi::Object importObject) override;
   void destroyModuleInstance(jsi::Runtime &rt, jsi::Object instance) override;
-  
+
   // Memory
   jsi::Object createMemory(jsi::Runtime &rt, double initial, std::optional<double> maximum) override;
-  void destroyMemory(jsi::Runtime &rt, jsi::Object instance) override;
   jsi::Object getMemoryBuffer(jsi::Runtime &rt, jsi::Object instance) override;
   void growMemory(jsi::Runtime &rt, jsi::Object instance, double delta) override;
-  
 };
 
 }

@@ -23,16 +23,7 @@ export default function App() {
   }, []);
 
   const makeInstance = useCallback(async () => {
-    const inst = await WebAssembly.instantiate(module!, imports);
-    setInstance(inst);
-    console.log('memory: ', inst.exports.memory);
-    console.log('memory.grow: ', inst.exports.memory.grow);
-    const buffer = inst.exports.memory.buffer;
-    console.log('memory.buffer:', buffer);
-    console.log('memory.buffer.isView: ', buffer.isView);
-    console.log('memory.buffer.byteLength: ', buffer.byteLength);
-    console.log('memory.buffer.resizable: ', buffer.resizable);
-    console.log('memory.buffer.detached: ', buffer.detached);
+    setInstance(await WebAssembly.instantiate(module!, imports));
   }, [module]);
 
   const onNumberChanged = useCallback(

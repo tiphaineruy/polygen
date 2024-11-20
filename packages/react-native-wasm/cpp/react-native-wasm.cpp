@@ -19,7 +19,7 @@ const Module& tryGetModule(jsi::Runtime& rt, const jsi::Object& holder) {
   if (moduleWrapper == nullptr) {
     throw new jsi::JSError(rt, "Argument passed is not a valid loaded module or it was unloaded (missing native state)");
   }
-  
+
   return moduleWrapper->getModule();
 }
 
@@ -28,7 +28,7 @@ const Memory& tryGetMemory(jsi::Runtime& rt, const jsi::Object& holder) {
   if (memoryWrapper == nullptr) {
     throw new jsi::JSError(rt, "Argument passed is not a valid WebAssembly memory");
   }
-  
+
   return memoryWrapper->getMemory();
 }
 
@@ -37,7 +37,7 @@ std::shared_ptr<MemoryNativeState> tryGetMemoryNativeState(jsi::Runtime& rt, con
   if (memoryWrapper == nullptr) {
     throw new jsi::JSError(rt, "Argument passed is not a valid WebAssembly memory");
   }
-  
+
   return memoryWrapper;
 }
 
@@ -59,7 +59,7 @@ jsi::Object ReactNativeWebAssembly::getModuleMetadata(jsi::Runtime &rt, jsi::Obj
   auto& mod = tryGetModule(rt, moduleHolder);
   auto imports = mod.getImports();
   auto exports = mod.getExports();
-  
+
   auto resultObj = jsi::Object {rt};
   auto importsArray = jsi::Array {rt, imports.size()};
   auto exportsArray = jsi::Array {rt, exports.size()};
@@ -104,19 +104,15 @@ void ReactNativeWebAssembly::destroyModuleInstance(jsi::Runtime &rt, jsi::Object
 jsi::Object ReactNativeWebAssembly::createMemory(jsi::Runtime &rt, double initial, std::optional<double> maximum) {
   auto maxPages = (uint64_t)maximum.value_or(100);
   auto memory = std::make_unique<Memory>((uint64_t)initial, maxPages, false);
-  
+
   jsi::Object holder {rt};
   holder.setNativeState(rt, std::make_shared<MemoryNativeState>(std::move(memory)));
   return rt;
 }
 
-void ReactNativeWebAssembly::destroyMemory(jsi::Runtime &rt, jsi::Object instance) {
-  
-}
-
 jsi::Object ReactNativeWebAssembly::getMemoryBuffer(jsi::Runtime &rt, jsi::Object instance) {
   auto memoryState = tryGetMemoryNativeState(rt, instance);
-  
+
   jsi::ArrayBuffer buffer {rt, memoryState};
   return buffer;
 }

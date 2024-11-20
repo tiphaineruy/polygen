@@ -98,7 +98,6 @@ export interface Spec extends TurboModule {
 
   // Memory
   createMemory(initial: number, maximum?: number): OpaqueMemoryNativeHandle;
-  destroyMemory(instance: OpaqueMemoryNativeHandle): void;
   getMemoryBuffer(instance: OpaqueMemoryNativeHandle): UnsafeArrayBuffer;
   growMemory(instance: OpaqueMemoryNativeHandle, delta: number): void;
 }
