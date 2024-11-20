@@ -1,5 +1,5 @@
 import * as path from 'node:path';
-import { escapeExportName, escapeModuleName } from './utils.js';
+import { mangleName, mangleModuleName } from './mangle.js';
 import type {
   ModuleExportFuncInfo,
   ModuleImportFuncInfo,
@@ -27,7 +27,7 @@ export class W2CModule {
   constructor(module: WasmModule) {
     this.wasmModule = module;
     this.name = path.basename(module.sourceModulePath, '.wasm');
-    this.escapedName = escapeModuleName(this.name);
+    this.escapedName = mangleModuleName(this.name);
   }
 
   /**
@@ -93,7 +93,7 @@ export class W2CModule {
       ...exportedFunction,
       returnType,
       hasReturn: exportedFunction.results.length > 0,
-      generatedCFunctionName: `w2c_${this.escapedName}_${escapeExportName(exportedFunction.name)}`,
+      generatedCFunctionName: `w2c_${this.escapedName}_${mangleName(exportedFunction.name)}`,
     };
   }
 }

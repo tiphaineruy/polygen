@@ -53,12 +53,18 @@ command.action(async () => {
       `Loading ${chalk.bold(mod)} metadata`
     );
 
-    // await oraPromise(
-    //   async () => {
-    generatedModules.push(await w2cGenerator.generateModule(parsedModule));
-    // },
-    // `Processing ${chalk.bold(mod)} module`
-    // );
+    await oraPromise(
+      async () => {
+        const result = await w2cGenerator.generateModule(parsedModule);
+        generatedModules.push(result);
+        return result;
+      },
+      `Processing ${chalk.bold(mod)} module`
+    );
+
+    // const memoriesCount = [...generatedModule.getImportedFunctions()].length;
+    // const functionCount = [...generatedModule.getExportedFunctions()].length;
+    // consola.info(`Found ${chalk.bold()}`)
 
     // const buildFile = await engine.renderFile('BUILD.bazel.liquid', {
     //   name,

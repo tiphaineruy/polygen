@@ -2,7 +2,7 @@ import path from 'path';
 import { Liquid } from 'liquidjs';
 import { W2CModule } from './module.js';
 import { WasmModule } from '../webassembly/module.js';
-import { escapeExportName, escapeModuleName } from './utils.js';
+import { mangleName, mangleModuleName } from './mangle.js';
 import { ModuleGenerator } from './generators/module-generator.js';
 import { HostGenerator } from './generators/host-generator.js';
 
@@ -89,12 +89,10 @@ export class W2CGenerator {
       // strictFilters: true,
     });
 
-    engine.registerFilter('escape_module_name', (value: string) =>
-      escapeModuleName(value)
+    engine.registerFilter('mangle_module_name', (value: string) =>
+      mangleModuleName(value)
     );
-    engine.registerFilter('escape_export_name', (value: string) =>
-      escapeExportName(value)
-    );
+    engine.registerFilter('mangle_name', (value: string) => mangleName(value));
 
     return engine;
   }

@@ -14,8 +14,8 @@ argCount, \
 
 namespace facebook::react {
 
-{%- capture ctx_class %}{{ moduleSafeName | capitalize }}ModuleContext{% endcapture %}
-{%- capture turbo_module_name %}ReactNative{{ moduleSafeName | capitalize }}{% endcapture %}
+{%- capture ctx_class %}{{ moduleName | mangle_module_name | capitalize }}ModuleContext{% endcapture %}
+{%- capture turbo_module_name %}ReactNative{{ moduleName | mangle_module_name | capitalize }}{% endcapture %}
 
 std::shared_ptr<{{ ctx_class }}> tryGetContext(jsi::Runtime& rt, const jsi::Object& obj) {
   if (!obj.hasNativeState(rt)) {
@@ -25,7 +25,7 @@ std::shared_ptr<{{ ctx_class }}> tryGetContext(jsi::Runtime& rt, const jsi::Obje
   return std::dynamic_pointer_cast<{{ ctx_class }}>(obj.getNativeState(rt));
 }
 
-jsi::Object create{{ moduleSafeName | capitalize }}Exports(jsi::Runtime &rt, jsi::Object&& importObject) {
+jsi::Object create{{ moduleName | mangle_module_name | capitalize }}Exports(jsi::Runtime &rt, jsi::Object&& importObject) {
   jsi::Object mod { rt };
 
   if (!wasm_rt_is_initialized()) {
@@ -35,10 +35,10 @@ jsi::Object create{{ moduleSafeName | capitalize }}Exports(jsi::Runtime &rt, jsi
   auto inst = std::make_shared<{{ ctx_class }}>(rt, std::move(importObject));
   {% capture initArgs -%}
     {%- for importedModuleName in importModuleNames -%}
-      , &inst->{{ importedModuleName | escape_module_name }}Ctx
+      , &inst->import{{ importedModuleName | mangle_module_name }}Ctx
     {%- endfor %}
   {%- endcapture -%}
-  wasm2c_{{ moduleSafeName }}_instantiate(&inst->rootCtx{{ initArgs }});
+  wasm2c_{{ moduleName | mangle_module_name }}_instantiate(&inst->rootCtx{{ initArgs }});
 
   mod.setNativeState(rt, inst);
 
@@ -49,7 +49,7 @@ jsi::Object create{{ moduleSafeName | capitalize }}Exports(jsi::Runtime &rt, jsi
   /* exported memory: '{{ export.name }}' */
   {
     jsi::Object holder {rt};
-    auto memory = std::make_unique<Memory>(w2c_{{ moduleSafeName }}_{{ export.name | escape_export_name }}(&inst->rootCtx));
+    auto memory = std::make_unique<Memory>(w2c_{{ moduleName | mangle_module_name }}_{{ export.name | mangle_module_name }}(&inst->rootCtx));
     holder.setNativeState(rt, std::make_shared<MemoryNativeState>(std::move(memory)));
     memories.setProperty(rt, "{{ export.name }}", std::move(holder));
   }

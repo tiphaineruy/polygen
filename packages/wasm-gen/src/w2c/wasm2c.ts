@@ -26,11 +26,11 @@ export async function generateCSources(
 
   const binary = path.join(waToolkitPath!, 'wasm2c');
   const args = [inputFile, '-o', `${outputSourceFile}.c`];
+  const defaultModuleName = path.basename(inputFile, '.wasm');
+  const moduleName = options?.moduleName ?? defaultModuleName;
 
-  if (options?.moduleName) {
-    args.push('--module-name');
-    args.push(options.moduleName);
-  }
+  args.push('--module-name');
+  args.push(moduleName);
 
   await execa(binary, args);
 }

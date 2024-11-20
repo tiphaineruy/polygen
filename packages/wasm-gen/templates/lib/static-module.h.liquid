@@ -4,9 +4,9 @@
 
 namespace facebook::react {
 
-{%- capture className %}WASM{{ moduleSafeName | capitalize }}Module{% endcapture %}
+{%- capture className %}WASM{{ moduleName | mangle_module_name | capitalize }}Module{% endcapture %}
 
-std::unique_ptr<Module> create{{ moduleSafeName | capitalize }}Module();
+std::unique_ptr<Module> create{{ moduleName | mangle_module_name | capitalize }}Module();
 
 class {{ className }}: public StaticLibraryModule {
 public:
