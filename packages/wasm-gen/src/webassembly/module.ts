@@ -22,8 +22,13 @@ export interface ModuleExportFuncInfo {
   results: TypeName[];
 }
 
+export interface ModuleExportMemInfo {
+  type: 'mem';
+  name: string;
+}
+
 export type ModuleImportInfo = ModuleImportFuncInfo;
-export type ModuleExportInfo = ModuleExportFuncInfo;
+export type ModuleExportInfo = ModuleExportFuncInfo | ModuleExportMemInfo;
 
 /**
  * Class representing parsed WebAssembly module metadata.
@@ -95,7 +100,7 @@ export class WasmModule {
           results: sig.results,
         };
       } else {
-        console.warn('Found unknown import type: ', field.descr.type);
+        console.warn('Found unknown import type: ', field.descr.type, field);
       }
     }
   }
@@ -136,6 +141,11 @@ export class WasmModule {
           params: sig.params.map((e) => e.valtype),
           results: sig.results,
         };
+      } else if (field.descr.exportType === 'Memory') {
+        yield {
+          name: field.name,
+          type: 'mem',
+        };
       } else {
         console.warn('Found unknown export type: ', field.descr.exportType);
       }
@@ -150,6 +160,19 @@ export class WasmModule {
   public *getExportedFunctions(): Generator<ModuleExportFuncInfo> {
     for (const exportInfo of this.getExports()) {
       if (exportInfo.type === 'func') {
+        yield exportInfo;
+      }
+    }
+  }
+
+  /**
+   * Returns a generators that iterates over this exported memories.
+   *
+   * @see getExports
+   */
+  public *getExportedMemories(): Generator<ModuleExportMemInfo> {
+    for (const exportInfo of this.getExports()) {
+      if (exportInfo.type === 'mem') {
         yield exportInfo;
       }
     }

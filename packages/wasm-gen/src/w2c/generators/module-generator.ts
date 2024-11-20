@@ -8,12 +8,14 @@ import type {
 import { BaseGenerator } from './base-generator.js';
 import { generateCSources } from '../wasm2c.js';
 import consola from 'consola';
+import type { ModuleExportMemInfo } from '../../webassembly/module.js';
 
 export class ModuleTemplateContext {
   public readonly moduleName: string;
   public readonly moduleSafeName: string;
   public readonly moduleContextCTypeName: string;
   public readonly exportedFunctions: CFunctionInfo[];
+  public readonly exportedMemories: ModuleExportMemInfo[];
   public readonly importModuleNames: string[];
   public readonly importedFunctions: AugmentedImportedFunction[];
 
@@ -22,6 +24,7 @@ export class ModuleTemplateContext {
     this.moduleSafeName = module.escapedName;
     this.moduleContextCTypeName = `w2c_${module.escapedName}`;
     this.exportedFunctions = [...module.getExportedFunctions()];
+    this.exportedMemories = [...module.getExportedMemories()];
     this.importModuleNames = [...module.wasmModule.imports.keys()];
     this.importedFunctions = [...module.getImportedFunctions()];
   }

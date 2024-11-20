@@ -1,7 +1,8 @@
-import WebAssembly from '../../../packages/react-native-wasm/src/index';
-// import { moduleRef } from 'react-native-wasm/react-native';
+import { register, WebAssembly, moduleRef } from 'react-native-wasm';
 import { useState, useCallback, useMemo } from 'react';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+
+register();
 
 const imports = {
   host: {
@@ -18,7 +19,7 @@ export default function App() {
   const numberText = useMemo(() => number.toString(), [number]);
 
   const loadModule = useCallback(async () => {
-    setModule(await WebAssembly.compile(WebAssembly.moduleRef('example')));
+    setModule(await WebAssembly.compile(moduleRef('example')));
   }, []);
 
   const makeInstance = useCallback(async () => {
@@ -35,7 +36,6 @@ export default function App() {
   );
 
   const compute = useCallback(() => {
-    // console.log('fib(2):');
     setResult(instance.exports.fib(number));
   }, [number, instance, setResult]);
 
