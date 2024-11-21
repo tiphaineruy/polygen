@@ -1,6 +1,10 @@
 #include <memory>
 #include "bridge.h"
 #include "react-native-wasm.h"
+#include "Global.h"
+#include "Memory.h"
+#include "Module.h"
+#include "NativeStateHelper.h"
 
 
 namespace facebook::react {
@@ -14,41 +18,12 @@ ReactNativeWebAssembly::~ReactNativeWebAssembly() {
   wasm_rt_free();
 }
 
-const Module& tryGetModule(jsi::Runtime& rt, const jsi::Object& holder) {
-  auto moduleWrapper = std::dynamic_pointer_cast<ModuleNativeState>(holder.getNativeState(rt));
-  if (moduleWrapper == nullptr) {
-    throw new jsi::JSError(rt, "Argument passed is not a valid loaded module or it was unloaded (missing native state)");
-  }
-
-  return moduleWrapper->getModule();
-}
-
-const Memory& tryGetMemory(jsi::Runtime& rt, const jsi::Object& holder) {
-  auto memoryWrapper = std::dynamic_pointer_cast<MemoryNativeState>(holder.getNativeState(rt));
-  if (memoryWrapper == nullptr) {
-    throw new jsi::JSError(rt, "Argument passed is not a valid WebAssembly memory");
-  }
-
-  return memoryWrapper->getMemory();
-}
-
-std::shared_ptr<MemoryNativeState> tryGetMemoryNativeState(jsi::Runtime& rt, const jsi::Object& holder) {
-  auto memoryWrapper = std::dynamic_pointer_cast<MemoryNativeState>(holder.getNativeState(rt));
-  if (memoryWrapper == nullptr) {
-    throw new jsi::JSError(rt, "Argument passed is not a valid WebAssembly memory");
-  }
-
-  return memoryWrapper;
-}
-
 
 jsi::Object ReactNativeWebAssembly::loadModule(jsi::Runtime &rt, jsi::String name) {
-  auto mod = loadWebAssemblyModule(std::move(name.utf8(rt)));
-  auto moduleWrapper = std::make_shared<ModuleNativeState>(std::move(mod));
+  auto rawModule = loadWebAssemblyModule(std::move(name.utf8(rt)));
+  auto mod = std::make_shared<Module>(std::move(rawModule));
 
-  jsi::Object holder {rt};
-  holder.setNativeState(rt, moduleWrapper);
-  return holder;
+  return NativeStateHelper::wrap(rt, mod);
 }
 
 void ReactNativeWebAssembly::unloadModule(jsi::Runtime &rt, jsi::Object module) {
@@ -56,9 +31,9 @@ void ReactNativeWebAssembly::unloadModule(jsi::Runtime &rt, jsi::Object module) 
 }
 
 jsi::Object ReactNativeWebAssembly::getModuleMetadata(jsi::Runtime &rt, jsi::Object moduleHolder) {
-  auto& mod = tryGetModule(rt, moduleHolder);
-  auto imports = mod.getImports();
-  auto exports = mod.getExports();
+  auto mod = NativeStateHelper::tryGet<Module>(rt, moduleHolder);
+  auto imports = mod->getImports();
+  auto exports = mod->getExports();
 
   auto resultObj = jsi::Object {rt};
   auto importsArray = jsi::Array {rt, imports.size()};
@@ -87,39 +62,61 @@ jsi::Object ReactNativeWebAssembly::getModuleMetadata(jsi::Runtime &rt, jsi::Obj
 }
 
 jsi::Object ReactNativeWebAssembly::createModuleInstance(jsi::Runtime &rt, jsi::Object moduleHolder, jsi::Object importObject) {
-  auto& mod = tryGetModule(rt, moduleHolder);
+  auto mod = NativeStateHelper::tryGet<Module>(rt, moduleHolder);
 
 //  auto init = library->get<wasm_function_ptr>("wasm2c_example_instantiate");
 //  auto free = library->get<wasm_function_ptr>("wasm2c_example_free");
 //  auto fib = library->get<wasm_fib>("w2c_example_fib");
 
-
-  return mod.createInstance(rt, std::move(importObject));
+  return mod->createInstance(rt, std::move(importObject));
 }
 
 void ReactNativeWebAssembly::destroyModuleInstance(jsi::Runtime &rt, jsi::Object instance) {
   instance.setNativeState(rt, nullptr);
 }
 
+
+// Memories
 jsi::Object ReactNativeWebAssembly::createMemory(jsi::Runtime &rt, double initial, std::optional<double> maximum) {
   auto maxPages = (uint64_t)maximum.value_or(100);
-  auto memory = std::make_unique<Memory>((uint64_t)initial, maxPages, false);
+  auto memory = std::make_shared<Memory>((uint64_t)initial, maxPages, false);
 
-  jsi::Object holder {rt};
-  holder.setNativeState(rt, std::make_shared<MemoryNativeState>(std::move(memory)));
-  return rt;
+  return NativeStateHelper::wrap(rt, memory);
 }
 
 jsi::Object ReactNativeWebAssembly::getMemoryBuffer(jsi::Runtime &rt, jsi::Object instance) {
-  auto memoryState = tryGetMemoryNativeState(rt, instance);
+  auto memoryState = NativeStateHelper::tryGet<Memory>(rt, instance);
 
   jsi::ArrayBuffer buffer {rt, memoryState};
   return buffer;
 }
 
 void ReactNativeWebAssembly::growMemory(jsi::Runtime &rt, jsi::Object instance, double delta) {
-  auto& memory = tryGetMemory(rt, instance);
-  memory.grow((uint64_t)delta);
+  auto memory = NativeStateHelper::tryGet<Memory>(rt, instance);
+  memory->grow((uint64_t)delta);
+}
+
+
+// Globals
+jsi::Object ReactNativeWebAssembly::createGlobal(jsi::Runtime &rt, double type, bool isMutable, double initialValue) {
+  auto waType = static_cast<Global::Type>((uint32_t)type);
+  jsi::Value initial { initialValue };
+  auto globalVar = std::make_shared<Global>(waType, std::move(initial), isMutable);
+
+  return NativeStateHelper::wrap(rt, globalVar);
+  
+}
+
+double ReactNativeWebAssembly::getGlobalValue(jsi::Runtime &rt, jsi::Object instance) {
+  auto globalVar = NativeStateHelper::tryGet<Global>(rt, instance);
+  
+  return globalVar->getValue().asNumber();
+}
+
+void ReactNativeWebAssembly::setGlobalValue(jsi::Runtime &rt, jsi::Object instance, double newValue) {
+  auto globalVar = NativeStateHelper::tryGet<Global>(rt, instance);
+  
+  globalVar->setValue(rt, {newValue});
 }
 
 }

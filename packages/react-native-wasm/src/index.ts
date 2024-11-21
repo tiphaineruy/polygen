@@ -1,8 +1,9 @@
+import { makeModuleName } from './internal';
+import { compile, instantiate, validate } from './WebAssembly';
 import { Module } from './Module';
 import { Instance } from './Instance';
-import { makeModuleName } from './internal';
-
-import { compile, instantiate, validate } from './WebAssembly';
+import { Memory } from './Memory';
+import { Global } from './Global';
 
 const impl = {
   compile,
@@ -10,6 +11,8 @@ const impl = {
   validate,
   Module,
   Instance,
+  Memory,
+  Global,
 } as const;
 
 export type Schema = typeof impl;

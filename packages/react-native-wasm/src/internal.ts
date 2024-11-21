@@ -1,4 +1,4 @@
-import type { BufferSource } from './common';
+import type { BufferSource } from './types';
 
 /**
  * Special prefix used in ArrayBuffers to differentiate mocked WebAssembly modules

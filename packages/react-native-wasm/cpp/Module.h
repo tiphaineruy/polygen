@@ -5,7 +5,7 @@
 
 namespace facebook::react {
 
-class Module {
+class Module: public jsi::NativeState {
 public:
   enum class SymbolKind {
     Function,

@@ -6,6 +6,18 @@ export type NativeImportObject = UnsafeObject;
 export type UnsafeArrayBuffer = UnsafeObject;
 
 /**
+ * WebAssembly type
+ */
+export enum NativeType {
+  I32,
+  U32,
+  I64,
+  U64,
+  F32,
+  F64,
+}
+
+/**
  * @spec https://webassembly.github.io/spec/js-api/index.html#modules
  */
 export type ImportExportKind = 'function' | 'table' | 'memory' | 'global';
@@ -79,9 +91,14 @@ export type OpaqueModuleNativeHandle = UnsafeObject;
 export type OpaqueModuleInstanceNativeHandle = UnsafeObject;
 
 /**
- * Opaque handle representing WebAssembly memory.
+ * Opaque handle representing WebAssembly memory instance.
  */
 export type OpaqueMemoryNativeHandle = UnsafeObject;
+
+/**
+ * Opaque handle representing WebAssembly global instance.
+ */
+export type OpaqueGlobalNativeHandle = UnsafeObject;
 
 export interface Spec extends TurboModule {
   // Modules
@@ -100,6 +117,15 @@ export interface Spec extends TurboModule {
   createMemory(initial: number, maximum?: number): OpaqueMemoryNativeHandle;
   getMemoryBuffer(instance: OpaqueMemoryNativeHandle): UnsafeArrayBuffer;
   growMemory(instance: OpaqueMemoryNativeHandle, delta: number): void;
+
+  // Globals
+  createGlobal(
+    type: NativeType,
+    mutable: boolean,
+    initialValue: number
+  ): OpaqueGlobalNativeHandle;
+  getGlobalValue(instance: OpaqueGlobalNativeHandle): number;
+  setGlobalValue(instance: OpaqueGlobalNativeHandle, newValue: number): void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('WebAssembly');

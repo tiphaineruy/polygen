@@ -1,7 +1,7 @@
 import { Module } from './Module';
 import { Instance } from './Instance';
 import { MAGIC, getModuleName } from './internal';
-import type { BufferSource } from './common';
+import type { BufferSource } from './types';
 
 /**
  * Type representing object with imports

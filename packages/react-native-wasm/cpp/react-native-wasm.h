@@ -2,7 +2,6 @@
 
 #include <ReactCommon/TurboModule.h>
 #include <RNWASMSpecJSI.h>
-#include "NativeStates.h"
 
 namespace facebook::react {
 
@@ -24,6 +23,11 @@ public:
   jsi::Object createMemory(jsi::Runtime &rt, double initial, std::optional<double> maximum) override;
   jsi::Object getMemoryBuffer(jsi::Runtime &rt, jsi::Object instance) override;
   void growMemory(jsi::Runtime &rt, jsi::Object instance, double delta) override;
+  
+  // Globals
+  jsi::Object createGlobal(jsi::Runtime &rt, double type, bool isMutable, double initialValue) override;
+  double getGlobalValue(jsi::Runtime &rt, jsi::Object instance) override;
+  void setGlobalValue(jsi::Runtime &rt, jsi::Object instance, double newValue) override;
 };
 
 }
