@@ -9,12 +9,12 @@ export type UnsafeArrayBuffer = UnsafeObject;
  * WebAssembly type
  */
 export enum NativeType {
-  I32,
-  U32,
-  I64,
-  U64,
-  F32,
-  F64,
+  I32 = 0,
+  U32 = 1,
+  I64 = 2,
+  U64 = 3,
+  F32 = 4,
+  F64 = 5,
 }
 
 /**
@@ -121,7 +121,7 @@ export interface Spec extends TurboModule {
   // Globals
   createGlobal(
     type: NativeType,
-    mutable: boolean,
+    isMutable: boolean,
     initialValue: number
   ): OpaqueGlobalNativeHandle;
   getGlobalValue(instance: OpaqueGlobalNativeHandle): number;

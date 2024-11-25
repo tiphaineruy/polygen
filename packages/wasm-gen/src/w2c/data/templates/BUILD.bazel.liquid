@@ -1,7 +1,7 @@
 load("@rules_apple//apple:apple.bzl", "apple_xcframework")
 
 cc_library(
-  name = "lib",
+  name = "library",
   srcs = glob(["*.h", "*.c"]),
   linkstatic = False,
 )
@@ -17,5 +17,5 @@ apple_xcframework(
   minimum_os_versions = {
     "ios": "11.0"
   },
-  deps = [":lib"],
+  deps = [":library"],
 )

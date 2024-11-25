@@ -187,5 +187,6 @@
     "android": {
       "javaPackageName": "com.callstack.reactnative.webassembly"
     }
-  }
+  },
+  "dependencies": {}
 }

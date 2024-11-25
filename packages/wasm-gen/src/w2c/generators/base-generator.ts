@@ -1,44 +1,59 @@
-import { Liquid } from 'liquidjs';
 import path from 'path';
 import fs from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 
-export abstract class BaseGenerator<TContext extends object> {
+const ASSETS_DIR = path.join(fileURLToPath(import.meta.url), 'data/assets');
+
+export abstract class BaseGenerator {
   public readonly outputDirectory: string;
-  public readonly context: TContext;
-  public readonly templateEngine: Liquid;
 
-  public constructor(
-    outputDirectory: string,
-    context: TContext,
-    templateEngine: Liquid
-  ) {
+  protected constructor(outputDirectory: string) {
     this.outputDirectory = outputDirectory;
-    this.context = context;
-    this.templateEngine = templateEngine;
   }
 
+  /**
+   * Builds path to specified file, prefixing it with output directory, if any.
+   *
+   * @param names Path components
+   */
   public outputPathTo(...names: string[]): string {
     return path.join(this.outputDirectory, ...names);
   }
 
-  protected async renderTo(templatePath: string, to: string): Promise<void> {
+  protected async writeTo(to: string, text: string): Promise<void> {
+    const targetPath = this.outputPathTo(to);
+    const dirname = path.dirname(targetPath);
+    await fs.mkdir(dirname, { recursive: true });
+    await fs.writeFile(targetPath, text, { encoding: 'utf8' });
+  }
+
+  protected async writeAllTo(
+    contentMap: Record<string, string>
+  ): Promise<void> {
+    const promises = Object.entries(contentMap).map(([to, content]) =>
+      this.writeTo(to, content)
+    );
+    await Promise.allSettled(promises);
+  }
+
+  protected async copyAsset(
+    assetPath: string,
+    to: string = assetPath
+  ): Promise<void> {
     const targetPath = this.outputPathTo(to);
     const dirname = path.dirname(targetPath);
     await fs.mkdir(dirname, { recursive: true });
 
-    return fs.writeFile(
-      targetPath,
-      await this.templateEngine.renderFile(
-        `${templatePath}.liquid`,
-        this.context
-      )
-    );
+    await fs.cp(path.join(ASSETS_DIR, assetPath), targetPath, {
+      recursive: true,
+      errorOnExist: false,
+    });
   }
 
-  protected async renderAllTo(mappings: Record<string, string>): Promise<void> {
-    const templates = Object.entries(mappings);
-    const promises = templates.map(async ([template, to]) => {
-      await this.renderTo(template, to);
+  protected async copyAssets(assetMap: Record<string, string>): Promise<void> {
+    const assets = Object.entries(assetMap);
+    const promises = assets.map(async ([from, to]) => {
+      await this.copyAsset(from, to);
     });
     await Promise.allSettled(promises);
   }

@@ -25,7 +25,7 @@ public:
   void growMemory(jsi::Runtime &rt, jsi::Object instance, double delta) override;
   
   // Globals
-  jsi::Object createGlobal(jsi::Runtime &rt, double type, bool isMutable, double initialValue) override;
+  jsi::Object createGlobal(jsi::Runtime &rt, jsi::Value type, bool isMutable, double initialValue) override;
   double getGlobalValue(jsi::Runtime &rt, jsi::Object instance) override;
   void setGlobalValue(jsi::Runtime &rt, jsi::Object instance, double newValue) override;
 };

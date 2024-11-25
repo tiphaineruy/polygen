@@ -9,7 +9,8 @@ class Module: public jsi::NativeState {
 public:
   enum class SymbolKind {
     Function,
-    Memory
+    Memory,
+    Global,
   };
   
   struct ExportInfo {

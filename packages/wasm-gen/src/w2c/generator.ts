@@ -1,18 +1,15 @@
 import path from 'path';
-import { Liquid } from 'liquidjs';
 import { W2CModule } from './module.js';
-import { WasmModule } from '../webassembly/module.js';
-import { mangleName, mangleModuleName } from './mangle.js';
+import { WebAssemblyModule } from '../webassembly/module.js';
 import { ModuleGenerator } from './generators/module-generator.js';
 import { HostGenerator } from './generators/host-generator.js';
 
 const UMBRELLA_PROJECT_NAME = '@host';
 
+/**
+ * Options used to change W2CGenerator behavior.
+ */
 export interface W2CGeneratorOptions {
-  // TODO: Make it local to the w2c
-  templateDirectory: string;
-  assetsDirectory: string;
-
   /**
    * Path to output directory where generated files will be created.
    *
@@ -28,8 +25,26 @@ export interface W2CGeneratorOptions {
    * This only works with static linking.
    *
    * TODO: Currently only this works
+   *
+   * @defaultValue true
    */
   singleProject?: boolean;
+
+  /**
+   * If true, generated files are re-generated and written
+   * even if stale.
+   *
+   * @defaultValue false
+   */
+  forceGenerate?: boolean;
+
+  /**
+   * If true, additional debug metadata files are generated alongside
+   * output source files.
+   *
+   * @defaultValue false
+   */
+  generateMetadata?: boolean;
 }
 
 /**
@@ -37,12 +52,10 @@ export interface W2CGeneratorOptions {
  */
 export class W2CGenerator {
   private readonly options: W2CGeneratorOptions;
-  private readonly templateEngine: Liquid;
 
   public constructor(options: W2CGeneratorOptions) {
     this.options = options;
     this.options.singleProject ??= true;
-    this.templateEngine = this._createEngine(options);
   }
 
   /**
@@ -50,16 +63,14 @@ export class W2CGenerator {
    *
    * @param module
    */
-  public async generateModule(module: WasmModule): Promise<W2CModule> {
+  public async generateModule(module: WebAssemblyModule): Promise<W2CModule> {
     const w2cModule = new W2CModule(module);
     const moduleOutputDir = this.outputPathForModule(w2cModule);
 
-    const moduleGenerator = new ModuleGenerator(
-      w2cModule,
-      moduleOutputDir,
-      this.templateEngine
-    );
-
+    const moduleGenerator = new ModuleGenerator(w2cModule, moduleOutputDir, {
+      renderMetadata: this.options.generateMetadata,
+      forceGenerate: this.options.forceGenerate,
+    });
     await moduleGenerator.generate();
     return w2cModule;
   }
@@ -72,29 +83,9 @@ export class W2CGenerator {
       this.options.outputDirectory,
       UMBRELLA_PROJECT_NAME
     );
-    const hostGenerator = new HostGenerator(
-      modules,
-      this.options.assetsDirectory,
-      moduleOutputDir,
-      this.templateEngine
-    );
+    const hostGenerator = new HostGenerator(modules, moduleOutputDir);
 
     return await hostGenerator.generate();
-  }
-
-  private _createEngine(options: W2CGeneratorOptions): Liquid {
-    const engine = new Liquid({
-      root: options.templateDirectory,
-      // strictVariables: true,
-      // strictFilters: true,
-    });
-
-    engine.registerFilter('mangle_module_name', (value: string) =>
-      mangleModuleName(value)
-    );
-    engine.registerFilter('mangle_name', (value: string) => mangleName(value));
-
-    return engine;
   }
 
   protected outputPathForModule(module: W2CModule) {

@@ -27,8 +27,9 @@
         "execa": "^9.4.1",
         "find-up": "^7.0.0",
         "glob": "^11.0.0",
-        "liquidjs": "^10.18.0",
-        "ora": "^8.1.0"
+        "indent-string": "^5.0.0",
+        "ora": "^8.1.0",
+        "strip-indent": "^4.0.0"
     },
     "eslintConfig": {
         "root": true,

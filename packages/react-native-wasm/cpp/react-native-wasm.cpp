@@ -20,8 +20,7 @@ ReactNativeWebAssembly::~ReactNativeWebAssembly() {
 
 
 jsi::Object ReactNativeWebAssembly::loadModule(jsi::Runtime &rt, jsi::String name) {
-  auto rawModule = loadWebAssemblyModule(std::move(name.utf8(rt)));
-  auto mod = std::make_shared<Module>(std::move(rawModule));
+  auto mod = loadWebAssemblyModule(std::move(name.utf8(rt)));
 
   return NativeStateHelper::wrap(rt, mod);
 }
@@ -41,6 +40,7 @@ jsi::Object ReactNativeWebAssembly::getModuleMetadata(jsi::Runtime &rt, jsi::Obj
 
   auto index = 0;
   for (auto& import_ : imports) {
+//    Bridging<NativeWebAssemblyModuleImportDescriptor<std::string, std::string, std::string>>;
     auto importObj = jsi::Object {rt};
     importObj.setProperty(rt, "module", import_.module);
     importObj.setProperty(rt, "name", import_.name);
@@ -98,7 +98,8 @@ void ReactNativeWebAssembly::growMemory(jsi::Runtime &rt, jsi::Object instance, 
 
 
 // Globals
-jsi::Object ReactNativeWebAssembly::createGlobal(jsi::Runtime &rt, double type, bool isMutable, double initialValue) {
+jsi::Object ReactNativeWebAssembly::createGlobal(jsi::Runtime &rt, jsi::Value rawType, bool isMutable, double initialValue) {
+  auto type = Bridging<NativeWebAssemblyNativeType>::fromJs(rt, rawType);
   auto waType = static_cast<Global::Type>((uint32_t)type);
   jsi::Value initial { initialValue };
   auto globalVar = std::make_shared<Global>(waType, std::move(initial), isMutable);
