@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 import consola from 'consola';
 import { glob } from 'glob';
@@ -7,27 +6,27 @@ import { oraPromise } from 'ora';
 import chalk from 'chalk';
 import path from 'path';
 import { findProjectRoot } from '../api/project.js';
-import { WasmModule } from '../webassembly/module.js';
 import { W2CGenerator } from '../w2c/generator.js';
 import { W2CModule } from '../w2c/module.js';
+import { loadWasmModuleFromFile } from '../webassembly/loader.js';
+import {
+  type AnySymbol,
+  SymbolSet,
+} from '../webassembly/helpers/symbol-set.js';
 
 const command = new Command('generate').description(
   'Generates React Native Modules from Wasm'
 );
-
-const ROOT_DIR = path.join(fileURLToPath(import.meta.url), '../../..');
-const ASSETS_DIR = path.join(ROOT_DIR, 'assets');
-const TEMPLATES_DIR = path.join(ROOT_DIR, 'templates');
 
 command.action(async () => {
   const projectRoot = await findProjectRoot();
   const generatedDir = path.join(projectRoot, 'wasm/_generated');
 
   const w2cGenerator = new W2CGenerator({
-    assetsDirectory: ASSETS_DIR,
-    templateDirectory: TEMPLATES_DIR,
     outputDirectory: generatedDir,
     singleProject: true,
+    generateMetadata: true,
+    forceGenerate: true,
   });
 
   const modules = await glob('wasm/*.wasm', { cwd: projectRoot });
@@ -37,34 +36,37 @@ command.action(async () => {
   const generatedModules: W2CModule[] = [];
 
   for (const mod of modules) {
-    // const fullInPath = path.join(projectRoot, mod);
-
-    // const libOutputDir = path.join(generatedDir, name);
-    // await fs.mkdir(libOutputDir, { recursive: true });
-
-    // const fullOutPath = path.join(libOutputDir, `${name}.c`);
-    // await fs.copyFile(
-    //   pathToRuntimeHeader,
-    //   path.join(libOutputDir, 'wasm-rt.h')
-    // );
-
     const parsedModule = await oraPromise(
-      WasmModule.fromWASM(mod),
-      `Loading ${chalk.bold(mod)} metadata`
+      loadWasmModuleFromFile(mod),
+      `Loading ${chalk.magenta(mod)} metadata`
     );
 
-    await oraPromise(
+    const generatedModule = await oraPromise(
       async () => {
         const result = await w2cGenerator.generateModule(parsedModule);
         generatedModules.push(result);
         return result;
       },
-      `Processing ${chalk.bold(mod)} module`
+      `Processing ${chalk.magenta(mod)} module`
     );
 
-    // const memoriesCount = [...generatedModule.getImportedFunctions()].length;
-    // const functionCount = [...generatedModule.getExportedFunctions()].length;
-    // consola.info(`Found ${chalk.bold()}`)
+    const imports = generatedModule.imports;
+    const exports = generatedModule.exports;
+    const hglt = chalk.dim;
+
+    function statsOf<T extends AnySymbol<TKey>, TKey = T['type']>(
+      set: SymbolSet<AnySymbol<TKey>>
+    ): string {
+      const highlight = chalk.dim;
+      const countOf = (type: TKey) => set.byType.get(type)?.size ?? 0;
+      return [
+        `${highlight(countOf('Function' as TKey))} functions`,
+        `${highlight(countOf('Memory' as TKey))} memories`,
+      ].join(', ');
+    }
+
+    consola.info(`  Found ${hglt(imports.size)} imports (${statsOf(imports)})`);
+    consola.info(`  Found ${hglt(exports.size)} exports (${statsOf(exports)})`);
 
     // const buildFile = await engine.renderFile('BUILD.bazel.liquid', {
     //   name,

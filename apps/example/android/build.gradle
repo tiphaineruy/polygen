@@ -41,3 +41,8 @@ allprojects {
         google()
     }
 }
+
+
+react {
+    bundleCommand = "webpack-bundle"
+}

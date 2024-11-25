@@ -5,7 +5,7 @@
 
 namespace facebook::react {
 
-class Memory {
+class Memory: public jsi::NativeState, public jsi::MutableBuffer {
 public:
   explicit Memory(wasm_rt_memory_t* memory): memory_(memory) {}
   
@@ -30,6 +30,14 @@ public:
   
   void grow(uint64_t delta) const {
     wasm_rt_grow_memory(this->memory_, delta);
+  }
+  
+  size_t size() const {
+    return memory_->size;
+  }
+  
+  uint8_t* data() {
+    return memory_->data;
   }
   
 private:

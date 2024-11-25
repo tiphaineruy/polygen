@@ -154,6 +154,7 @@
     "source": "src",
     "output": "lib",
     "targets": [
+      "codegen",
       [
         "commonjs",
         {
@@ -186,5 +187,6 @@
     "android": {
       "javaPackageName": "com.callstack.reactnative.webassembly"
     }
-  }
+  },
+  "dependencies": {}
 }
