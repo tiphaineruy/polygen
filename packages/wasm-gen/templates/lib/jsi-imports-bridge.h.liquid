@@ -4,7 +4,7 @@
 #include "{{ moduleName }}.h"
 
 {% for importedModuleName in importModuleNames %}
-struct w2c_{{ importedModuleName | escape_module_name }} {
+struct w2c_{{ importedModuleName | mangle_module_name }} {
   {{ moduleContextCTypeName }}* root;
   facebook::jsi::Runtime& rt;
   facebook::jsi::Object importObj;
@@ -13,20 +13,19 @@ struct w2c_{{ importedModuleName | escape_module_name }} {
 
 namespace facebook::react {
 
-class {{ moduleSafeName | capitalize }}ModuleContext: public jsi::NativeState {
+class {{ moduleName | mangle_module_name | capitalize }}ModuleContext: public jsi::NativeState {
 public:
-  {{ moduleSafeName | capitalize }}ModuleContext(jsi::Runtime& rt, jsi::Object&& importObject)
+  {{ moduleName | mangle_module_name | capitalize }}ModuleContext(jsi::Runtime& rt, jsi::Object&& importObject)
     : importObject(std::move(importObject))
       {% for importedModuleName in importModuleNames -%}
-      , {{ importedModuleName | escape_module_name }}Ctx{&rootCtx, rt, this->importObject.getPropertyAsObject(rt, "{{ importedModuleName }}")}
-      {%- unless forloop.last %},{% endunless %}
+      , import{{ importedModuleName | mangle_module_name }}Ctx{&rootCtx, rt, this->importObject.getPropertyAsObject(rt, "{{ importedModuleName }}")}
       {% endfor %}
   {}
 
   jsi::Object importObject;
   {{ moduleContextCTypeName }} rootCtx;
   {% for importedModuleName in importModuleNames -%}
-  w2c_{{ importedModuleName | escape_module_name }} {{ importedModuleName | escape_module_name }}Ctx;
+  w2c_{{ importedModuleName | mangle_module_name }} import{{ importedModuleName | mangle_module_name }}Ctx;
   {% endfor %}
 };
 

@@ -12,7 +12,6 @@ import type { ModuleExportMemInfo } from '../../webassembly/module.js';
 
 export class ModuleTemplateContext {
   public readonly moduleName: string;
-  public readonly moduleSafeName: string;
   public readonly moduleContextCTypeName: string;
   public readonly exportedFunctions: CFunctionInfo[];
   public readonly exportedMemories: ModuleExportMemInfo[];
@@ -21,11 +20,10 @@ export class ModuleTemplateContext {
 
   public constructor(module: W2CModule) {
     this.moduleName = module.name;
-    this.moduleSafeName = module.escapedName;
     this.moduleContextCTypeName = `w2c_${module.escapedName}`;
     this.exportedFunctions = [...module.getExportedFunctions()];
     this.exportedMemories = [...module.getExportedMemories()];
-    this.importModuleNames = [...module.wasmModule.imports.keys()];
+    this.importModuleNames = [...module.wasmModule.imports.keys()].toReversed();
     this.importedFunctions = [...module.getImportedFunctions()];
   }
 }
@@ -50,7 +48,7 @@ export class ModuleGenerator extends BaseGenerator<ModuleTemplateContext> {
         this.renderImportsBridge(),
         this.renderExportsBridge(),
         this.renderStaticModule(),
-        // this.renderMetadata(),
+        this.renderMetadata(),
       ]);
     } catch (e) {
       consola.error(e);

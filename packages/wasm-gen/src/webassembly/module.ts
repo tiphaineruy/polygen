@@ -5,6 +5,7 @@ import {
   type ModuleFunctionSignature,
   type DecodeResult,
   type TypeName,
+  type DescriptorIdentifier,
 } from '@webassemblyjs/wasm-parser';
 
 export interface ModuleImportFuncInfo {
@@ -128,7 +129,7 @@ export class WasmModule {
       }
 
       if (field.descr.exportType === 'Func') {
-        const sig = this._funcs.get(`func_${field.descr.id.raw}`);
+        const sig = this.resolveFunctionId(field.descr.id);
 
         if (!sig) {
           console.warn(`Could not find export signature for: ${field.name}`);
@@ -216,5 +217,16 @@ export class WasmModule {
     }
 
     return map;
+  }
+
+  private resolveFunctionId(
+    identifier: DescriptorIdentifier
+  ): ModuleFunctionSignature | undefined {
+    switch (identifier.type) {
+      case 'Identifier':
+        return this._funcs.get(identifier.value);
+      case 'NumberLiteral':
+        return this._funcs.get(`func_${identifier.raw}`);
+    }
   }
 }

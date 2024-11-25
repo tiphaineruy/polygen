@@ -14,7 +14,7 @@ extern "C" {
   , {{ param_type }} arg{{ forloop.index0 }}
 {%- endfor %}
 {%- endcapture %}
-{{ import.returnType }} w2c_{{ import.module }}_{{ import.name | escape_export_name }}(w2c_{{ import.module }}* ctx{{ params }}) {
+{{ import.returnType }} w2c_{{ import.module | mangle_module_name }}_{{ import.name | mangle_name }}(w2c_{{ import.module | mangle_module_name }}* ctx{{ params }}) {
   auto fn = ctx->importObj.getPropertyAsFunction(ctx->rt, "{{ import.name }}");
 
   {% if import.hasReturn -%}

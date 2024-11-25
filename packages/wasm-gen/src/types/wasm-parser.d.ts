@@ -51,16 +51,31 @@ declare module '@webassemblyjs/wasm-parser' {
     | ModuleExportFunctionDescriptor
     | ModuleExportMemoryDescriptor;
 
+  interface DescriptorNumericIdentifier {
+    type: 'NumberLiteral';
+    value: number;
+    raw: string;
+  }
+
+  interface DescriptorSimpleIdentifier {
+    type: 'Identifier';
+    value: string;
+  }
+
+  type DescriptorIdentifier =
+    | DescriptorNumericIdentifier
+    | DescriptorSimpleIdentifier;
+
   interface ModuleExportFunctionDescriptor {
     type: 'FuncExportDescr';
     exportType: string;
-    id: { type: 'NumberLiteral'; value: number; raw: string };
+    id: DescriptorIdentifier;
   }
 
   interface ModuleExportMemoryDescriptor {
     type: 'ModuleExportDescr';
     exportType: 'Memory';
-    ud: { type: 'NumberLiteral'; value: number; raw: string };
+    id: DescriptorIdentifier;
   }
 
   interface ModuleImport {

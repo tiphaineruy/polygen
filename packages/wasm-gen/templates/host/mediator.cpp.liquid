@@ -10,13 +10,13 @@ const std::vector<std::string> module_names {
 namespace facebook::react {
 
 {% for generatedModule in generatedModules %}
-std::unique_ptr<Module> create{{ generatedModule.name | escape_module_name | capitalize }}Module();
+std::unique_ptr<Module> create{{ generatedModule.name | mangle_module_name | capitalize }}Module();
 {% endfor %}
 
 std::unique_ptr<Module> loadWebAssemblyModule(const std::string& name) {
 {% for generatedModule in generatedModules %}
   if (name == "{{ generatedModule.name }}") {
-    return create{{ generatedModule.name | escape_module_name | capitalize }}Module();
+    return create{{ generatedModule.name | mangle_module_name | capitalize }}Module();
   }
 {% endfor %}
   return nullptr;
