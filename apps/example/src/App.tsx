@@ -1,4 +1,4 @@
-import { register, WebAssembly, moduleRef } from 'react-native-wasm';
+import { register, WebAssembly, moduleRef } from '@callstack/polygen';
 import { useState, useCallback, useMemo } from 'react';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
 
@@ -48,12 +48,6 @@ export default function App() {
         disabled={!module}
         onPress={makeInstance}
       />
-      {/*{module != null && (*/}
-      {/*  <>*/}
-      {/*    <Text>Imports: {JSON.stringify(WebAssembly.Module.imports(module))}</Text>*/}
-      {/*    <Text>Exports: {JSON.stringify(WebAssembly.Module.exports(module))}</Text>*/}
-      {/*  </>*/}
-      {/*)}*/}
       <Text>Instance created: {instance != null ? 'yes' : 'no'}</Text>
       {instance != null && (
         <Text>Exports: {JSON.stringify(instance.exports)}</Text>

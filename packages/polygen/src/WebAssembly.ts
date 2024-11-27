@@ -27,7 +27,7 @@ export function validate(bufferOrView: BufferSource): boolean {
 
   if (!isCorrect) {
     console.warn(
-      '[react-native-wasm] Validation of WebAssembly module failed. Only precompiled modules are allowed.'
+      '[polygen] Validation of WebAssembly module failed. Only precompiled modules are allowed.'
     );
   }
 

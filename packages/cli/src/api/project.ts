@@ -1,4 +1,4 @@
-import { findUp } from 'find-up';
+import findUp from 'find-up';
 import path from 'path';
 import consola from 'consola';
 import { UnknownProjectError } from '../errors.js';

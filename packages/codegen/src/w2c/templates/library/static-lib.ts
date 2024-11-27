@@ -9,7 +9,7 @@ export function buildStaticLibraryHeader(module: W2CModule) {
     HEADER +
     stripIndent(`
     #pragma once
-    #include <ReactNativeWebAssembly/StaticLibraryModule.h>
+    #include <ReactNativePolygen/StaticLibraryModule.h>
 
     namespace facebook::react {
 

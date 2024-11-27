@@ -15,7 +15,7 @@ export function buildImportBridgeHeader(module: W2CModule) {
     stripIndent(`
     #pragma once
     #include <jsi/jsi.h>
-    #include <ReactNativeWebAssembly/gen-utils.h>
+    #include <ReactNativePolygen/gen-utils.h>
     #include "${module.name}.h"
 
     ${importsContextDeclarations.join('\n    ')}

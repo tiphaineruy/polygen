@@ -1,18 +1,19 @@
 {
-  "name": "react-native-wasm-turbo-repo",
+  "name": "polygen",
+  "private": true,
   "version": "0.1.0",
   "description": "React Native Module for running WebAssembly modules without interpretng.",
-  "homepage": "https://github.com/callstack/react-native-wasm#readme",
+  "homepage": "https://github.com/callstack-incubator/polygen#readme",
   "author": "Callstack (https://github.com/callstack)",
   "license": "MIT",
-  "private": true,
   "scripts": {
-    "example": "yarn workspace react-native-wasm-example",
-    "lint": "turbo run lint",
-    "lint:fix": "turbo run lint -- --fix",
-    "typecheck": "turbo run typecheck",
-    "build:android": "turbo run build:android",
-    "build:ios": "turbo run build:ios"
+    "example": "yarn workspace polygen-example",
+    "dev": "yarn workspaces foreach --all -pi run dev",
+    "lint": "eslint \"packages/*/**/*.{js,jsx,ts,tsx}\" \"apps/*/**/*.{js,jsx,ts,tsx}\"",
+    "lint:fix": "eslint \"packages/*/**/*.{js,jsx,ts,tsx}\" \"apps/*/**/*.{js,jsx,ts,tsx}\" --fix",
+    "typecheck": "yarn workspaces foreach --all -pi run typecheck",
+    "build:android": "yarn workspaces --all -pi foreach run build:android",
+    "build:ios": "yarn workspaces foreach --all -pi run build:ios"
   },
   "keywords": [
     "react-native",
@@ -22,13 +23,14 @@
     "webassembly"
   ],
   "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.15.0",
     "@evilmartians/lefthook": "^1.5.0",
     "@react-native/eslint-config": "^0.73.1",
-    "eslint-config-prettier": "^9.0.0",
     "eslint": "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.0.3",
-    "turbo": "^1.10.7",
     "typescript": "^5.2.2"
   },
   "workspaces": [
@@ -41,5 +43,6 @@
     "tabWidth": 2,
     "trailingComma": "es5",
     "useTabs": false
-  }
+  },
+  "packageManager": "yarn@4.5.3"
 }

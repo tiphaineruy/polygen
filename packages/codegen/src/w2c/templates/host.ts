@@ -12,7 +12,7 @@ export function buildHostHeader() {
     #include <string>
     #include <vector>
     #include <jsi/jsi.h>
-    #include <ReactNativeWebAssembly/Module.h>
+    #include <ReactNativePolygen/Module.h>
 
     namespace facebook::react {
 
