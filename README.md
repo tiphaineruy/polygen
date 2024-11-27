@@ -5,14 +5,13 @@ React Native Module for running WebAssembly modules statically without interpret
 ## Installation
 
 ```sh
-npm install react-native-wasm
+npm install polygen
 ```
 
 ## Usage
 
-
 ```js
-import { multiply } from 'react-native-wasm';
+import { multiply } from 'packages/polygen';
 
 // ...
 

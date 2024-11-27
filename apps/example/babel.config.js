@@ -1,5 +1,5 @@
 const path = require('path');
-const pkg = require('../../packages/react-native-wasm/package.json');
+const pkg = require('../../packages/polygen/package.json');
 
 module.exports = {
   presets: ['module:@react-native/babel-preset'],

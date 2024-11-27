@@ -6,13 +6,12 @@ import { oraPromise } from 'ora';
 import chalk from 'chalk';
 import path from 'path';
 import { findProjectRoot } from '../api/project.js';
-import { W2CGenerator } from '../w2c/generator.js';
-import { W2CModule } from '../w2c/module.js';
-import { loadWasmModuleFromFile } from '../webassembly/loader.js';
 import {
   type AnySymbol,
+  loadWasmModuleFromFile,
   SymbolSet,
-} from '../webassembly/helpers/symbol-set.js';
+} from '@callstack/polygen-codegen';
+import { W2CGenerator, W2CModule } from '@callstack/polygen-codegen/w2c';
 
 const command = new Command('generate').description(
   'Generates React Native Modules from Wasm'

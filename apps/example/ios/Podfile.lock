@@ -1520,7 +1520,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ReactNativeWebAssembly (0.1.0):
+  - ReactNativePolygen (0.1.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1634,7 +1634,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../../../node_modules/react-native/ReactCommon`)
   - "ReactNativeHost (from `../../../node_modules/@rnx-kit/react-native-host`)"
-  - ReactNativeWebAssembly (from `../../../packages/react-native-wasm`)
+  - ReactNativePolygen (from `../../../packages/polygen`)
   - "ReactNativeWebAssemblyHost (from `../wasm/_generated/@host`)"
   - ReactTestApp-DevSupport (from `../../../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
@@ -1770,8 +1770,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   ReactNativeHost:
     :path: "../../../node_modules/@rnx-kit/react-native-host"
-  ReactNativeWebAssembly:
-    :path: "../../../packages/react-native-wasm"
+  ReactNativePolygen:
+    :path: "../../../packages/polygen"
   ReactNativeWebAssemblyHost:
     :path: "../wasm/_generated/@host"
   ReactTestApp-DevSupport:
@@ -1844,7 +1844,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 3982de3211b80e119d9daa9cd6af090d75cb8e90
   ReactCommon: 6a952e50c2a4b694731d7682aaa6c79bc156e4ad
   ReactNativeHost: a27bb5af1c4d73dd3e80cc7ce295407f414e0e8c
-  ReactNativeWebAssembly: 5c4293cc6960c23a70e80b7b2dd75fc104f27c2f
+  ReactNativePolygen: ca25fb92ac0f5fa974b303fa36919bb15bb27124
   ReactNativeWebAssemblyHost: ac1a79737a93ba3bcd87b533fc0838a3bf22db37
   ReactTestApp-DevSupport: cb1c13fd708e12d8cfe9a8adf4bab85519cec65d
   ReactTestApp-Resources: 7db90c026cccdf40cfa495705ad436ccc4d64154

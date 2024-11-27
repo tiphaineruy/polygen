@@ -58,8 +58,8 @@ export function buildExportBridgeSource(module: W2CModule) {
   return (
     HEADER +
     stripIndent(`
-    #include <ReactNativeWebAssembly/gen-utils.h>
-    #include <ReactNativeWebAssembly/Memory.h>
+    #include <ReactNativePolygen/gen-utils.h>
+    #include <ReactNativePolygen/Memory.h>
     #include "jsi-exports-bridge.h"
     #include "wasm-rt.h"
 

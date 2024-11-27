@@ -1,5 +1,5 @@
 const path = require('path');
-const pkg = require('../../packages/react-native-wasm/package.json');
+const pkg = require('../../packages/polygen/package.json');
 const { configureProjects } = require('react-native-test-app');
 
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
   }),
   dependencies: {
     [pkg.name]: {
-      root: path.join(__dirname, '..', '..', 'packages', 'react-native-wasm'),
+      root: path.join(__dirname, '..', '..', 'packages', 'polygen'),
     },
   },
 };

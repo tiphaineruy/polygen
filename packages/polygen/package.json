@@ -1,10 +1,11 @@
 {
-  "name": "react-native-wasm",
+  "name": "@callstack/polygen",
   "version": "0.1.0",
-  "description": "React Native Module for running WebAssembly modules without interpretng.",
+  "description": "React Native Module for running WebAssembly modules, with native performance.",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
+  "react-native": "",
   "exports": {
     ".": {
       "import": {
@@ -39,6 +40,7 @@
   "scripts": {
     "test": "jest",
     "typecheck": "tsc",
+    "dev": "tsc --watch",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prepare": "bob build",
@@ -47,18 +49,17 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "webassembly",
+    "wasm"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/callstack/react-native-wasm.git"
-  },
+  "repository": "github:callstack-incubator/polygen",
   "author": "Callstack (https://github.com/callstack)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/callstack/react-native-wasm/issues"
   },
-  "homepage": "https://github.com/callstack/react-native-wasm#readme",
+  "homepage": "https://github.com/callstack/polygen",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -102,54 +103,10 @@
       "@commitlint/config-conventional"
     ]
   },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
-    }
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@react-native",
-      "prettier"
-    ],
-    "rules": {
-      "react/react-in-jsx-scope": "off",
-      "prettier/prettier": [
-        "error",
-        {
-          "quoteProps": "consistent",
-          "singleQuote": true,
-          "tabWidth": 2,
-          "trailingComma": "es5",
-          "useTabs": false
-        }
-      ]
-    }
-  },
   "eslintIgnore": [
     "node_modules/",
     "lib/"
   ],
-  "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
-  },
   "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
@@ -187,6 +144,5 @@
     "android": {
       "javaPackageName": "com.callstack.reactnative.webassembly"
     }
-  },
-  "dependencies": {}
+  }
 }

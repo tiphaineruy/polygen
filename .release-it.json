@@ -1,0 +1,23 @@
+{
+  "hooks": {
+    "before:init": ["yarn typecheck", "yarn test", "yarn lint"],
+    "after:bump": "yarn build",
+    "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}."
+  },
+  "git": {
+    "commitMessage": "chore: release ${version}",
+    "tagName": "v${version}"
+  },
+  "npm": {
+    "publish": true
+  },
+  "github": {
+    "release": true,
+    "releaseName": "v${version}"
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "angular"
+    }
+  }
+}

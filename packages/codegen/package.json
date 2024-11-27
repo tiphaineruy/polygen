@@ -1,0 +1,77 @@
+{
+  "name": "@callstack/polygen-codegen",
+  "version": "0.0.1",
+  "description": "The code generator for @callstack/polygen",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./w2c": {
+      "types": "./dist/w2c/index.d.ts",
+      "import": "./dist/w2c/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "postinstall": "tsc || true",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"**/*.{ts,js}\""
+  },
+  "dependencies": {
+    "@webassemblyjs/wasm-parser": "^1.12.1",
+    "execa": "^9.4.1",
+    "find-up": "^7.0.0",
+    "glob": "^11.0.0",
+    "indent-string": "^5.0.0",
+    "strip-indent": "^4.0.0"
+  },
+  "devDependencies": {
+    "@react-native/eslint-config": "^0.76.3",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.4.1",
+    "typescript": "^5.7.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@react-native",
+      "prettier"
+    ],
+    "rules": {
+      "react/react-in-jsx-scope": "off",
+      "prettier/prettier": [
+        "error",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "es5",
+          "useTabs": false
+        }
+      ]
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  }
+}
