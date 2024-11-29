@@ -1,7 +1,7 @@
 #pragma once
 
 #include <jsi/jsi.h>
-#include <ReactNativeWebAssembly/wasm-rt.h>
+#include <ReactNativePolygen/wasm-rt.h>
 
 namespace facebook::react {
 

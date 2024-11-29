@@ -1,6 +1,7 @@
 import { register, WebAssembly, moduleRef } from '@callstack/polygen';
 import { useState, useCallback, useMemo } from 'react';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+import foobar from './example.wasm';
 
 register();
 
@@ -9,6 +10,8 @@ const imports = {
     add: (a: number, b: number) => a + b,
   },
 };
+
+console.log(foobar);
 
 export default function App() {
   const [module, setModule] = useState<any>();

@@ -9,12 +9,12 @@ module.exports = {
       {
         extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
         alias: {
-          'react-native-wasm': path.join(
+          polygen: path.join(
             __dirname,
             '..',
             '..',
             'packages',
-            'react-native-wasm',
+            'polygen',
             pkg.source
           ),
         },

@@ -2,8 +2,7 @@
 import { Command } from 'commander';
 import { oraPromise } from 'ora';
 import fs from 'node:fs/promises';
-import path from 'node:path';
-import { findProjectRoot } from '../api/project.js';
+import { Project } from '@callstack/polygen-core-build';
 import chalk from 'chalk';
 import consola from 'consola';
 
@@ -15,8 +14,8 @@ const command = new Command('clean')
   .option('-y, --yes', 'Remove files without confirmation');
 
 command.action(async (options) => {
-  const projectRoot = await findProjectRoot();
-  const generatedPath = path.join(projectRoot, GENERATED_DIR);
+  const project = await Project.findClosest();
+  const generatedPath = project.fullOutputDirectory;
 
   let confirmed = options.yes;
 

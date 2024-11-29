@@ -10,6 +10,8 @@ program.name('polygen').description('Generates React Native Modules from Wasm');
 
 program
   .configureHelp({ showGlobalOptions: true })
+  .option('-p, --project', 'Path to JS project')
+  .option('-c, --config', 'Path to configuration file')
   .option('-v, --verbose', 'Output verbose');
 
 program.addCommand(initCommand);

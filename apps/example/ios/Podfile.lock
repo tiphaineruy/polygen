@@ -1635,7 +1635,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../../../node_modules/react-native/ReactCommon`)
   - "ReactNativeHost (from `../../../node_modules/@rnx-kit/react-native-host`)"
   - ReactNativePolygen (from `../../../packages/polygen`)
-  - "ReactNativeWebAssemblyHost (from `../wasm/_generated/@host`)"
+  - "ReactNativeWebAssemblyHost (from `../node_modules/.polygen-out/@host`)"
   - ReactTestApp-DevSupport (from `../../../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
   - Yoga (from `../../../node_modules/react-native/ReactCommon/yoga`)
@@ -1773,7 +1773,7 @@ EXTERNAL SOURCES:
   ReactNativePolygen:
     :path: "../../../packages/polygen"
   ReactNativeWebAssemblyHost:
-    :path: "../wasm/_generated/@host"
+    :path: "../node_modules/.polygen-out/@host"
   ReactTestApp-DevSupport:
     :path: "../../../node_modules/react-native-test-app"
   ReactTestApp-Resources:
@@ -1851,6 +1851,6 @@ SPEC CHECKSUMS:
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 055f92ad73f8c8600a93f0e25ac0b2344c3b07e6
 
-PODFILE CHECKSUM: d6341e909cc0f9420ccef95c3c9ddbd7387ba0df
+PODFILE CHECKSUM: 51e62b2f42be79b9349e3a226c841f43d137df26
 
 COCOAPODS: 1.16.2
