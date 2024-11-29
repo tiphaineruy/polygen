@@ -15,55 +15,21 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -p tsconfig.json --watch",
     "postinstall": "tsc -p tsconfig.json || true",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "eslint \"**/*.{ts,js}\""
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "license": "MIT",
   "dependencies": {
-    "@webassemblyjs/wasm-parser": "^1.12.1",
     "chalk": "^5.3.0",
     "commander": "^12.1.0",
     "consola": "^3.2.3",
-    "ora": "^8.1.0"
+    "ora": "^8.1.0",
+    "@callstack/polygen-codegen": "workspace:^"
   },
   "devDependencies": {
-    "@callstack/polygen-codegen": "workspace:^",
-    "@react-native/eslint-config": "^0.76.3",
-    "eslint": "^9.15.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "prettier": "^3.4.1",
     "typescript": "^5.7.2"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@react-native",
-      "prettier"
-    ],
-    "rules": {
-      "react/react-in-jsx-scope": "off",
-      "prettier/prettier": [
-        "error",
-        {
-          "quoteProps": "consistent",
-          "singleQuote": true,
-          "tabWidth": 2,
-          "trailingComma": "es5",
-          "useTabs": false
-        }
-      ]
-    }
   },
   "eslintIgnore": [
     "node_modules/",
     "lib/"
-  ],
-  "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
-  }
+  ]
 }
