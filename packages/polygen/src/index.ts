@@ -1,4 +1,3 @@
-import { makeModuleName } from './internal';
 import { compile, instantiate, validate } from './WebAssembly';
 import { Module } from './Module';
 import { Instance } from './Instance';
@@ -23,12 +22,3 @@ export function register() {
 }
 
 export const WebAssembly = impl;
-
-/**
- * Allows to reference a module by its name.
- *
- * @param name
- */
-export function moduleRef(name: string): ArrayBuffer {
-  return makeModuleName(name);
-}

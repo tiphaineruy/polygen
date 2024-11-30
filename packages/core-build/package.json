@@ -1,11 +1,8 @@
 {
-  "name": "@callstack/polygen-cli",
+  "name": "@callstack/polygen-core-build",
   "version": "0.0.1",
-  "description": "The Command Line Interface for @callstack/polygen",
+  "description": "The Core libraries of Polygen for generating code",
   "main": "./dist/index.js",
-  "bin": {
-    "polygen": "./dist/index.js"
-  },
   "type": "module",
   "files": [
     "dist"
@@ -19,7 +16,6 @@
   "license": "MIT",
   "dependencies": {
     "@callstack/polygen-codegen": "workspace:^",
-    "@callstack/polygen-core-build": "workspace:^",
     "chalk": "^5.3.0",
     "commander": "^12.1.0",
     "consola": "^3.2.3",

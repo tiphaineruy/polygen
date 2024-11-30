@@ -1,6 +1,7 @@
-import { register, WebAssembly, moduleRef } from '@callstack/polygen';
+import { register, WebAssembly } from '@callstack/polygen';
 import { useState, useCallback, useMemo } from 'react';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+import example from './example.wasm';
 
 register();
 
@@ -19,7 +20,7 @@ export default function App() {
   const numberText = useMemo(() => number.toString(), [number]);
 
   const loadModule = useCallback(async () => {
-    setModule(await WebAssembly.compile(moduleRef('example')));
+    setModule(await WebAssembly.compile(example));
   }, []);
 
   const makeInstance = useCallback(async () => {

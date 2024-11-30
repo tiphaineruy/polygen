@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import consola from 'consola';
-import { glob } from 'glob';
 import { oraPromise } from 'ora';
 import chalk from 'chalk';
-import path from 'path';
-import { findProjectRoot } from '../api/project.js';
+import { Project } from '@callstack/polygen-core-build';
 import {
   type AnySymbol,
+  generateWasmJSModule,
   loadWasmModuleFromFile,
   SymbolSet,
 } from '@callstack/polygen-codegen';
@@ -18,25 +17,25 @@ const command = new Command('generate').description(
 );
 
 command.action(async () => {
-  const projectRoot = await findProjectRoot();
-  const generatedDir = path.join(projectRoot, 'wasm/_generated');
+  const project = await Project.findClosest();
 
   const w2cGenerator = new W2CGenerator({
-    outputDirectory: generatedDir,
+    outputDirectory: project.fullOutputDirectory,
     singleProject: true,
     generateMetadata: true,
     forceGenerate: true,
   });
 
-  const modules = await glob('wasm/*.wasm', { cwd: projectRoot });
+  const modules = await project.getWebAssemblyModules();
   // const pathToRuntimeHeader = path.join(ASSETS_DIR, 'wasm-rt-weak.h');
 
   consola.info('Found', chalk.bold(modules.length), 'WebAssembly module(s)');
   const generatedModules: W2CModule[] = [];
 
   for (const mod of modules) {
+    const modPath = project.pathToSource(mod);
     const parsedModule = await oraPromise(
-      loadWasmModuleFromFile(mod),
+      loadWasmModuleFromFile(modPath),
       `Loading ${chalk.magenta(mod)} metadata`
     );
 
@@ -66,6 +65,8 @@ command.action(async () => {
 
     consola.info(`  Found ${hglt(imports.size)} imports (${statsOf(imports)})`);
     consola.info(`  Found ${hglt(exports.size)} exports (${statsOf(exports)})`);
+
+    await generateWasmJSModule(project, `src/${mod}`);
 
     // const buildFile = await engine.renderFile('BUILD.bazel.liquid', {
     //   name,

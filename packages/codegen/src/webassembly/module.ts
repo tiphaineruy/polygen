@@ -19,6 +19,8 @@ export class WebAssemblyModule {
    */
   public readonly sourceModulePath: string;
 
+  public readonly checksum: Buffer;
+
   /**
    * A smart set of imported symbols by this module.
    *
@@ -41,10 +43,12 @@ export class WebAssemblyModule {
 
   constructor(
     path: string,
+    checksum: Buffer,
     imports: SymbolSet<ModuleImportInfo>,
     exports: SymbolSet<ModuleExportInfo>
   ) {
     this.sourceModulePath = path;
+    this.checksum = checksum;
     this.imports = imports;
     this.exports = exports;
   }

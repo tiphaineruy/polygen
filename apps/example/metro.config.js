@@ -1,5 +1,6 @@
 const path = require('path');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+const { getPolygenMetroConfig } = require('@callstack/polygen-metro-config');
 
 const root = path.resolve(__dirname, '..', '..');
 
@@ -24,4 +25,8 @@ const config = {
   },
 };
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+module.exports = mergeConfig(
+  getDefaultConfig(__dirname),
+  getPolygenMetroConfig(),
+  config
+);

@@ -1,4 +1,5 @@
 #include <memory>
+#include <span>
 #include "bridge.h"
 #include "react-native-wasm.h"
 #include "Global.h"
@@ -19,8 +20,10 @@ ReactNativeWebAssembly::~ReactNativeWebAssembly() {
 }
 
 
-jsi::Object ReactNativeWebAssembly::loadModule(jsi::Runtime &rt, jsi::String name) {
-  auto mod = loadWebAssemblyModule(std::move(name.utf8(rt)));
+jsi::Object ReactNativeWebAssembly::loadModule(jsi::Runtime &rt, jsi::Object moduleData) {
+  auto buffer = moduleData.getArrayBuffer(rt);
+  std::span<uint8_t> bufferView { buffer.data(rt), buffer.size(rt) };
+  auto mod = loadWebAssemblyModule(bufferView);
 
   return NativeStateHelper::wrap(rt, mod);
 }
@@ -105,18 +108,18 @@ jsi::Object ReactNativeWebAssembly::createGlobal(jsi::Runtime &rt, jsi::Value ra
   auto globalVar = std::make_shared<Global>(waType, std::move(initial), isMutable);
 
   return NativeStateHelper::wrap(rt, globalVar);
-  
+
 }
 
 double ReactNativeWebAssembly::getGlobalValue(jsi::Runtime &rt, jsi::Object instance) {
   auto globalVar = NativeStateHelper::tryGet<Global>(rt, instance);
-  
+
   return globalVar->getValue().asNumber();
 }
 
 void ReactNativeWebAssembly::setGlobalValue(jsi::Runtime &rt, jsi::Object instance, double newValue) {
   auto globalVar = NativeStateHelper::tryGet<Global>(rt, instance);
-  
+
   globalVar->setValue(rt, {newValue});
 }
 

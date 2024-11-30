@@ -9,6 +9,6 @@
 namespace facebook::react {
 
 const std::vector<std::string>& getAvailableModules();
-std::unique_ptr<Module> loadWebAssemblyModule(const std::string& name);
+std::unique_ptr<Module> loadWebAssemblyModule(std::span<uint8_t> moduleData);
 
 }

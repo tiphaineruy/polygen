@@ -16,6 +16,6 @@ options = {
 
 use_test_app! options do |target|
   target.app do
-    pod 'ReactNativeWebAssemblyHost', :path => "../wasm/_generated/@host"
+    pod 'ReactNativeWebAssemblyHost', :path => "../node_modules/.polygen-out/@host"
   end
 end
