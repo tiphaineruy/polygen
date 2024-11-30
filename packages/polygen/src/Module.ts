@@ -9,13 +9,11 @@ import NativeWASM, {
  * @spec https://webassembly.github.io/spec/js-api/index.html#modules
  */
 export class Module {
-  public name: string;
   public nativeHandle: OpaqueModuleNativeHandle;
   metadata: InternalModuleMetadata;
 
-  public constructor(name: string) {
-    this.name = name;
-    this.nativeHandle = NativeWASM.loadModule(name);
+  public constructor(buffer: ArrayBuffer) {
+    this.nativeHandle = NativeWASM.loadModule(buffer);
     this.metadata = NativeWASM.getModuleMetadata(this.nativeHandle);
   }
 

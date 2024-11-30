@@ -46,7 +46,12 @@ export class W2CModule extends WebAssemblyModule {
   public readonly generatedExports: GeneratedExport[];
 
   constructor(module: WebAssemblyModule) {
-    super(module.sourceModulePath, module.imports, module.exports);
+    super(
+      module.sourceModulePath,
+      module.checksum,
+      module.imports,
+      module.exports
+    );
     this.name = path.basename(module.sourceModulePath, '.wasm');
     this.mangledName = mangleModuleName(this.name);
     this.generatedClassName = capitalize(this.mangledName);

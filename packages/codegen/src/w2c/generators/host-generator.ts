@@ -20,8 +20,8 @@ export class HostGenerator extends BaseGenerator {
 
   public async renderMediator() {
     await this.writeAllTo({
-      'mediator.h': templates.buildHostHeader(),
-      'mediator.cpp': templates.buildHostSource(this.modules),
+      'loader.h': templates.buildHostHeader(),
+      'loader.cpp': templates.buildHostSource(this.modules),
       'ReactNativeWebAssemblyHost.podspec': templates.buildPodspec(),
     });
   }

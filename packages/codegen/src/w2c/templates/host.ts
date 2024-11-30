@@ -8,6 +8,7 @@ export function buildHostHeader() {
     HEADER +
     stripIndent(`
     #pragma once
+    #include <span>
     #include <memory>
     #include <string>
     #include <vector>
@@ -17,7 +18,7 @@ export function buildHostHeader() {
     namespace facebook::react {
 
     const std::vector<std::string>& getAvailableModules();
-    std::shared_ptr<Module> loadWebAssemblyModule(const std::string& name);
+    std::shared_ptr<Module> loadWebAssemblyModule(std::span<uint8_t> moduleData);
 
     }
   `).trimStart()
@@ -30,6 +31,13 @@ export function buildHostSource(generatedModules: W2CModule[]) {
     .join(', ')
     .trimEnd()
     .replace(/,$/, '');
+
+  const moduleChecksumMap = generatedModules
+    .map(
+      (module) => `{ "${module.checksum.toString('hex')}", "${module.name}" }`
+    )
+    .join(',\n      ')
+    .trimEnd();
 
   function makeModuleFactoryDecl(module: W2CModule) {
     return `std::unique_ptr<Module> ${module.moduleFactoryFunctionName}();`;
@@ -44,9 +52,14 @@ export function buildHostSource(generatedModules: W2CModule[]) {
   return (
     HEADER +
     stripIndent(`
-    #include "mediator.h"
+    #include "loader.h"
+    #include <ReactNativePolygen/w2c.h>
 
     const std::vector<std::string> moduleNames { ${moduleNames} };
+
+    std::unordered_map<std::string, std::string> moduleByChecksum {
+      ${moduleChecksumMap}
+    };
 
     namespace facebook::react {
 
@@ -56,7 +69,9 @@ export function buildHostSource(generatedModules: W2CModule[]) {
 
     ${generatedModules.map(makeModuleFactoryDecl).join('\n    ')}
 
-    std::shared_ptr<Module> loadWebAssemblyModule(const std::string& name) {
+    std::shared_ptr<Module> loadWebAssemblyModule(std::span<uint8_t> moduleData) {
+      auto metadata = ModuleMetadataView::fromBuffer(moduleData);
+      auto& name = metadata.name;
       ${indentString(generatedModules.map(makeModuleHandler).join('\n'), 6).trimStart()}
       return nullptr;
     }

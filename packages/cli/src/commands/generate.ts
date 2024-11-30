@@ -6,12 +6,11 @@ import chalk from 'chalk';
 import { Project } from '@callstack/polygen-core-build';
 import {
   type AnySymbol,
+  generateWasmJSModule,
   loadWasmModuleFromFile,
   SymbolSet,
 } from '@callstack/polygen-codegen';
 import { W2CGenerator, W2CModule } from '@callstack/polygen-codegen/w2c';
-import fs from 'node:fs/promises';
-import path from 'path';
 
 const command = new Command('generate').description(
   'Generates React Native Modules from Wasm'
@@ -67,15 +66,7 @@ command.action(async () => {
     consola.info(`  Found ${hglt(imports.size)} imports (${statsOf(imports)})`);
     consola.info(`  Found ${hglt(exports.size)} exports (${statsOf(exports)})`);
 
-    const cleanName = path.basename(mod, '.wasm');
-    const modulePath = path.join(
-      project.fullOutputDirectory,
-      'modules',
-      `${cleanName}.js`
-    );
-    console.log('write to: ', modulePath);
-    await fs.mkdir(path.dirname(modulePath), { recursive: true });
-    await fs.writeFile(modulePath, `export default "${cleanName}"`, 'utf8');
+    await generateWasmJSModule(project, `src/${mod}`);
 
     // const buildFile = await engine.renderFile('BUILD.bazel.liquid', {
     //   name,

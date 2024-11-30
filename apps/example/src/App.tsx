@@ -1,7 +1,7 @@
-import { register, WebAssembly, moduleRef } from '@callstack/polygen';
+import { register, WebAssembly } from '@callstack/polygen';
 import { useState, useCallback, useMemo } from 'react';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
-import foobar from './example.wasm';
+import example from './example.wasm';
 
 register();
 
@@ -10,8 +10,6 @@ const imports = {
     add: (a: number, b: number) => a + b,
   },
 };
-
-console.log(foobar);
 
 export default function App() {
   const [module, setModule] = useState<any>();
@@ -22,7 +20,7 @@ export default function App() {
   const numberText = useMemo(() => number.toString(), [number]);
 
   const loadModule = useCallback(async () => {
-    setModule(await WebAssembly.compile(moduleRef('example')));
+    setModule(await WebAssembly.compile(example));
   }, []);
 
   const makeInstance = useCallback(async () => {

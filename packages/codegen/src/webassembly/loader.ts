@@ -11,6 +11,7 @@ import type { ModuleExportInfo, ModuleImportInfo } from './types.js';
 import { WebAssemblyModule } from './module.js';
 import { SymbolSet } from './helpers/symbol-set.js';
 import { readFile } from 'node:fs/promises';
+import { computeChecksumBuffer } from '../utils/checksum.js';
 
 /**
  * Helper type for Function cache map.
@@ -21,10 +22,12 @@ type FuncCache = Map<string, ModuleFunctionSignature>;
  * Creates WebAssemblyModule from specified loaded metadata.
  *
  * @param name Name of the module (usually the filename without the extension)
+ * @param checksum Module checksum
  * @param metadata Loaded metadata
  */
-export function createWasmModule(
+export function readWasmModule(
   name: string,
+  checksum: Buffer,
   metadata: DecodeResult
 ): WebAssemblyModule {
   const imports = new SymbolSet<ModuleImportInfo>();
@@ -51,7 +54,7 @@ export function createWasmModule(
     }
   }
 
-  return new WebAssemblyModule(name, imports, exports);
+  return new WebAssemblyModule(name, checksum, imports, exports);
 }
 
 /**
@@ -64,12 +67,13 @@ export function createWasmModule(
 export async function loadWasmModuleFromFile(
   wasmPath: string
 ): Promise<WebAssemblyModule> {
-  const moduleBinaryContents = await readFile(wasmPath);
+  const moduleBinaryContents = await readFile(wasmPath, null);
+  const checksum = computeChecksumBuffer(moduleBinaryContents);
   const parsedModule = decode(moduleBinaryContents, {
     ignoreCodeSection: true,
     ignoreDataSection: true,
   });
-  return createWasmModule(wasmPath, parsedModule);
+  return readWasmModule(wasmPath, checksum, parsedModule);
 }
 
 function processImport(field: ModuleImport): ModuleImportInfo | undefined {

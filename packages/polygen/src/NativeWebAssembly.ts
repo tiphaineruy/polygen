@@ -102,7 +102,7 @@ export type OpaqueGlobalNativeHandle = UnsafeObject;
 
 export interface Spec extends TurboModule {
   // Modules
-  loadModule(name: string): OpaqueModuleNativeHandle;
+  loadModule(moduleData: UnsafeArrayBuffer): OpaqueModuleNativeHandle;
   unloadModule(module: OpaqueModuleNativeHandle): void;
   getModuleMetadata(module: OpaqueModuleNativeHandle): InternalModuleMetadata;
 

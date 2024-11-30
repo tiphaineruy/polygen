@@ -1,6 +1,5 @@
 import { Module } from './Module';
 import { Instance } from './Instance';
-import { MAGIC, getModuleName } from './internal';
 import type { BufferSource } from './types';
 
 /**
@@ -17,25 +16,28 @@ export type ImportObject = Record<string, any>;
  *
  * @param bufferOrView ArrayBuffer or DataView containing the WebAssembly module to validate
  */
-export function validate(bufferOrView: BufferSource): boolean {
-  const view = ArrayBuffer.isView(bufferOrView)
-    ? (bufferOrView as DataView)
-    : new DataView(bufferOrView);
+export function validate(_bufferOrView: BufferSource): boolean {
+  // TODO: move this to Native side
+  // const view = ArrayBuffer.isView(bufferOrView)
+  //   ? (bufferOrView as DataView)
+  //   : new DataView(bufferOrView);
 
-  const isCorrect =
-    view.getInt8(0) === MAGIC[0] && view.getInt8(1) === MAGIC[1];
+  // const isCorrect =
+  // view.getInt8(0) === MAGIC[0] && view.getInt8(1) === MAGIC[1];
 
-  if (!isCorrect) {
-    console.warn(
-      '[polygen] Validation of WebAssembly module failed. Only precompiled modules are allowed.'
-    );
-  }
+  // if (!isCorrect) {
+  //   console.warn(
+  //     '[polygen] Validation of WebAssembly module failed. Only precompiled modules are allowed.'
+  //   );
+  // }
 
-  return isCorrect;
+  return true;
 }
 
 export async function compile(bufferOrView: BufferSource): Promise<Module> {
-  return new Module(getModuleName(bufferOrView));
+  return new Module(
+    ArrayBuffer.isView(bufferOrView) ? bufferOrView.buffer : bufferOrView
+  );
 }
 
 export async function instantiate(
