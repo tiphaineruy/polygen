@@ -1,6 +1,6 @@
 {
   "name": "@callstack/polygen",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "React Native Module for running WebAssembly modules, with native performance.",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
@@ -111,7 +111,6 @@
     "source": "src",
     "output": "lib",
     "targets": [
-      "codegen",
       [
         "commonjs",
         {
@@ -135,12 +134,8 @@
   },
   "codegenConfig": {
     "name": "RNWasmSpec",
-    "type": "all",
+    "type": "modules",
     "jsSrcsDir": "src",
-    "outputDir": {
-      "ios": "ios/generated",
-      "android": "android/generated"
-    },
     "android": {
       "javaPackageName": "com.callstack.reactnative.webassembly"
     }
