@@ -45,6 +45,8 @@ export interface W2CGeneratorOptions {
    * @defaultValue false
    */
   generateMetadata?: boolean;
+
+  hackAutoNumberCoerce?: boolean;
 }
 
 /**
@@ -70,6 +72,7 @@ export class W2CGenerator {
     const moduleGenerator = new ModuleGenerator(w2cModule, moduleOutputDir, {
       renderMetadata: this.options.generateMetadata,
       forceGenerate: this.options.forceGenerate,
+      hackAutoNumberCoerce: this.options.hackAutoNumberCoerce,
     });
     await moduleGenerator.generate();
     return w2cModule;

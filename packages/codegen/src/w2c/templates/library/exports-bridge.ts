@@ -20,9 +20,28 @@ export function buildExportBridgeHeader(module: W2CModule) {
 `;
 }
 
-export function buildExportBridgeSource(module: W2CModule) {
+export function buildExportBridgeSource(
+  module: W2CModule,
+  { hackAutoNumberCoerce }: { hackAutoNumberCoerce?: boolean } = {}
+) {
+  hackAutoNumberCoerce ??= false;
+
+  const numberCoerceFunc = `
+    double getNumericVal(const facebook::jsi::Value& val) {
+      if (val.isBool()) {
+        return (double)val.asBool();
+      }
+      return val.asNumber();
+    }
+  `;
+
   function makeExportFunc(func: GeneratedFunctionExport) {
-    const args = func.params.map((_, i) => `, args[${i}].asNumber()`).join('');
+    const args = func.params
+      .map(
+        (_, i) =>
+          `, ${hackAutoNumberCoerce ? `getNumericVal(args[${i}])` : `args[${i}].asNumber()`}`
+      )
+      .join('');
     const res = func.hasReturn ? 'auto res = ' : '';
     const returnPart = func.hasReturn
       ? 'return jsi::Value { (double)res };'
@@ -62,6 +81,8 @@ export function buildExportBridgeSource(module: W2CModule) {
     #include <ReactNativePolygen/Memory.h>
     #include "jsi-exports-bridge.h"
     #include "wasm-rt.h"
+
+    ${hackAutoNumberCoerce ? numberCoerceFunc : ''}
 
     namespace facebook::react {
       std::shared_ptr<${module.contextClassName}> get${module.contextClassName}Context(jsi::Runtime& rt, const jsi::Value& val) {
