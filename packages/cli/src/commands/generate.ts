@@ -17,11 +17,17 @@ const command = new Command('generate')
   .addOption(
     new Option('-o, --output-dir <outputDir>', 'Path to output directory')
   )
-  .addOption(new Option('-f, --force', 'Generate code even if not outdated'));
-
+  .addOption(new Option('-f, --force', 'Generate code even if not outdated'))
+  .addOption(
+    new Option(
+      '--force-number-coercion',
+      'Force number coercion in module exports'
+    )
+  );
 interface Options {
   outputDir?: string;
   force?: boolean;
+  forceNumberCoercion?: boolean;
 }
 
 command.action(async (options: Options) => {
@@ -36,7 +42,7 @@ command.action(async (options: Options) => {
     singleProject: true,
     generateMetadata: true,
     forceGenerate: options.force ?? false,
-    hackAutoNumberCoerce: true,
+    hackAutoNumberCoerce: options.forceNumberCoercion ?? false,
   });
 
   const modules = await project.getWebAssemblyModules();
