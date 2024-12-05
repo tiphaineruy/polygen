@@ -69,6 +69,7 @@ command.action(async (options: Options) => {
 
     const imports = generatedModule.imports;
     const exports = generatedModule.exports;
+    console.log('Mod exports: ', exports);
     const hglt = chalk.dim;
 
     function statsOf<T extends AnySymbol<TKey>, TKey = T['type']>(
@@ -79,6 +80,8 @@ command.action(async (options: Options) => {
       return [
         `${highlight(countOf('Function' as TKey))} functions`,
         `${highlight(countOf('Memory' as TKey))} memories`,
+        `${highlight(countOf('Global' as TKey))} globals`,
+        `${highlight(countOf('Table' as TKey))} tables`,
       ].join(', ');
     }
 

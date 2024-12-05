@@ -1,7 +1,7 @@
 import { register, WebAssembly } from '@callstack/polygen';
 import { useState, useCallback, useMemo } from 'react';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
-import example from './example.wasm';
+import example from './table_test.wasm';
 
 register();
 

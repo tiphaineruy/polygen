@@ -6,6 +6,8 @@ import type {
   GeneratedExport,
   GeneratedFunctionExport,
   GeneratedFunctionImport,
+  GeneratedGlobalExport,
+  GeneratedGlobalImport,
   GeneratedImport,
   GeneratedMemoryExport,
   ImportedModuleInfo,
@@ -13,6 +15,7 @@ import type {
 import type {
   ModuleExportFuncInfo,
   ModuleImportFuncInfo,
+  ModuleImportGlobalInfo,
 } from '../webassembly/types.js';
 
 export class W2CModule extends WebAssemblyModule {
@@ -88,6 +91,14 @@ export class W2CModule extends WebAssemblyModule {
     }
   }
 
+  public *getGeneratedExportedGlobals(): Generator<GeneratedGlobalExport> {
+    for (const ex of this.generatedExports) {
+      if (ex.type === 'Global') {
+        yield ex;
+      }
+    }
+  }
+
   public get generatedContextTypeName(): string {
     return `w2c_${this.mangledName}`;
   }
@@ -116,6 +127,8 @@ export class W2CModule extends WebAssemblyModule {
       switch (el.type) {
         case 'Function':
           return this.buildImportedFunction(el);
+        case 'Global':
+          return this.buildImportedGlobal(el);
       }
     });
 
@@ -144,7 +157,6 @@ export class W2CModule extends WebAssemblyModule {
   ): GeneratedFunctionImport {
     const importInfo = this.importedModulesInfo[func.module];
     if (!importInfo) {
-      console.log(this.importedModulesInfo);
       throw new Error(
         `Assert error: could not get import info for ${func.module}`
       );
@@ -157,6 +169,23 @@ export class W2CModule extends WebAssemblyModule {
         func.name,
         importInfo.mangledName
       ),
+    };
+  }
+
+  private buildImportedGlobal(
+    global: ModuleImportGlobalInfo
+  ): GeneratedGlobalImport {
+    const importInfo = this.importedModulesInfo[global.module];
+    if (!importInfo) {
+      throw new Error(
+        `Assert error: could not get import info for ${global.module}`
+      );
+    }
+
+    return {
+      ...global,
+      mangledName: ``,
+      moduleInfo: importInfo,
     };
   }
 

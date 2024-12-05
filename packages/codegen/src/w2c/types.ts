@@ -1,7 +1,10 @@
 import type {
   ModuleExportFuncInfo,
-  ModuleExportMemInfo,
+  ModuleExportGlobalInfo,
+  ModuleExportMemoryInfo,
+  ModuleExportTableInfo,
   ModuleImportFuncInfo,
+  ModuleImportGlobalInfo,
 } from '../webassembly/types.js';
 
 export interface ImportedModuleInfo {
@@ -20,7 +23,12 @@ export interface GeneratedFunctionImport extends ModuleImportFuncInfo {
   hasReturn: boolean;
 }
 
-export type GeneratedImport = GeneratedFunctionImport;
+export interface GeneratedGlobalImport extends ModuleImportGlobalInfo {
+  mangledName: string;
+  moduleInfo: ImportedModuleInfo;
+}
+
+export type GeneratedImport = GeneratedFunctionImport | GeneratedGlobalImport;
 
 export interface GeneratedFunctionExport extends ModuleExportFuncInfo {
   mangledName: string;
@@ -30,9 +38,23 @@ export interface GeneratedFunctionExport extends ModuleExportFuncInfo {
   hasReturn: boolean;
 }
 
-export interface GeneratedMemoryExport extends ModuleExportMemInfo {
+export interface GeneratedMemoryExport extends ModuleExportMemoryInfo {
   mangledName: string;
   mangledAccessorFunction: string;
 }
 
-export type GeneratedExport = GeneratedFunctionExport | GeneratedMemoryExport;
+export interface GeneratedGlobalExport extends ModuleExportGlobalInfo {
+  mangledName: string;
+  mangledAccessorFunction: string;
+}
+
+export interface GeneratedTableExport extends ModuleExportTableInfo {
+  mangledName: string;
+  mangledAccessorFunction: string;
+}
+
+export type GeneratedExport =
+  | GeneratedFunctionExport
+  | GeneratedMemoryExport
+  | GeneratedGlobalExport
+  | GeneratedTableExport;

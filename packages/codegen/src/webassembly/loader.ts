@@ -1,22 +1,15 @@
 import {
   decode,
   type DecodeResult,
-  type DescriptorIdentifier,
   type ModuleImport,
   type ModuleExport,
-  type ModuleField,
-  type ModuleFunctionSignature,
 } from '@webassemblyjs/wasm-parser';
 import type { ModuleExportInfo, ModuleImportInfo } from './types.js';
 import { WebAssemblyModule } from './module.js';
 import { SymbolSet } from './helpers/symbol-set.js';
 import { readFile } from 'node:fs/promises';
 import { computeChecksumBuffer } from '../utils/checksum.js';
-
-/**
- * Helper type for Function cache map.
- */
-type FuncCache = Map<string, ModuleFunctionSignature>;
+import { buildLookupCache, LookupCache } from './lookup-cache.js';
 
 /**
  * Creates WebAssemblyModule from specified loaded metadata.
@@ -33,7 +26,7 @@ export function readWasmModule(
   const imports = new SymbolSet<ModuleImportInfo>();
   const exports = new SymbolSet<ModuleExportInfo>();
   const fields = metadata.body[0]?.fields ?? [];
-  const funcCache = buildFuncCache(fields);
+  const lookupCache = buildLookupCache(fields);
 
   for (const field of fields) {
     switch (field.type) {
@@ -45,7 +38,7 @@ export function readWasmModule(
         break;
       }
       case 'ModuleExport': {
-        const result = processExport(field, funcCache);
+        const result = processExport(field, lookupCache);
         if (result) {
           exports.add(result);
         }
@@ -87,65 +80,72 @@ function processImport(field: ModuleImport): ModuleImportInfo | undefined {
       params: sig.params.map((e) => e.valtype),
       results: sig.results,
     };
+  } else if (field.descr.type === 'GlobalType') {
+    return {
+      type: 'Global',
+      module: field.module,
+      name: field.name,
+      variableType: field.descr.valtype,
+      isMutable: field.descr.mutability === 'var',
+    };
   }
 
+  // @ts-ignore
   console.warn('Found unknown import type: ', field.descr.type, field);
   return;
 }
 
 function processExport(
   field: ModuleExport,
-  funcCache: FuncCache
+  lookupCache: LookupCache
 ): ModuleExportInfo | undefined {
   if (field.descr.exportType === 'Func') {
-    const sig = resolveFunctionId(field.descr.id, funcCache);
+    const func = lookupCache.getFunction(field.descr.id);
 
-    if (!sig) {
-      console.warn(`Could not find export signature for: ${field.name}`);
+    if (!func) {
+      console.warn(`Could not find function named: ${field.name}`);
       return;
     }
 
     return {
-      name: field.name,
       type: 'Function',
-      params: sig.params.map((e) => e.valtype),
-      results: sig.results,
+      name: field.name,
+      params: func.signature.params.map((e) => e.valtype),
+      results: func.signature.results,
     };
   } else if (field.descr.exportType === 'Memory') {
     return {
-      name: field.name,
       type: 'Memory',
+      name: field.name,
+    };
+  } else if (field.descr.exportType === 'Global') {
+    const globalVar = lookupCache.getGlobal(field.descr.id);
+    if (!globalVar) {
+      console.warn(`Could not find global ${field.name}`);
+      return;
+    }
+
+    return {
+      type: 'Global',
+      name: field.name,
+      variableType: globalVar.globalType.valtype,
+      isMutable: globalVar.globalType.mutability === 'var',
+    };
+  } else if (field.descr.exportType === 'Table') {
+    const table = lookupCache.getTable(field.descr.id);
+    if (!table) {
+      console.warn(`Could not find table ${field.name}`);
+      return;
+    }
+
+    return {
+      type: 'Table',
+      name: field.name,
+      limits: table.limits,
+      elementType: table.elementType,
     };
   }
 
   console.warn('Found unknown export type: ', field.descr.exportType);
   return;
-}
-
-/**
- * Creates a `Map` object with found function types for faster lookup.
- */
-function buildFuncCache(fields: ModuleField[]): FuncCache {
-  const map = new Map<string, ModuleFunctionSignature>();
-
-  // Build map of funcs
-  for (const field of fields) {
-    if (field.type === 'Func') {
-      map.set(field.name.value, field.signature);
-    }
-  }
-
-  return map;
-}
-
-function resolveFunctionId(
-  identifier: DescriptorIdentifier,
-  funcCache: FuncCache
-): ModuleFunctionSignature | undefined {
-  switch (identifier.type) {
-    case 'Identifier':
-      return funcCache.get(identifier.value);
-    case 'NumberLiteral':
-      return funcCache.get(`func_${identifier.raw}`);
-  }
 }
