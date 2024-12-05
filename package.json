@@ -13,7 +13,8 @@
     "lint:fix": "eslint \"packages/*/**/*.{js,jsx,ts,tsx}\" \"apps/*/**/*.{js,jsx,ts,tsx}\" --fix",
     "typecheck": "yarn workspaces foreach --all -pi run typecheck",
     "build:android": "yarn workspaces --all -pi foreach run build:android",
-    "build:ios": "yarn workspaces foreach --all -pi run build:ios"
+    "build:ios": "yarn workspaces foreach --all -pi run build:ios",
+    "test": "vitest"
   },
   "keywords": [
     "react-native",
