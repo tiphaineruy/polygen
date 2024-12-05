@@ -53,6 +53,10 @@ export class Project {
     return new Project(projectRoot, config);
   }
 
+  public updateOptionsInMemory(options: Partial<ProjectOptions>) {
+    Object.assign(this.options, options);
+  }
+
   public pathTo(...components: string[]): string {
     return path.join(this.projectRoot, ...components);
   }

@@ -7,6 +7,7 @@ import * as templates from '../templates/library/index.js';
 export interface ModuleGeneratorOptions {
   renderMetadata?: boolean;
   forceGenerate?: boolean;
+  hackAutoNumberCoerce?: boolean;
 }
 
 export class ModuleGenerator extends BaseGenerator {
@@ -58,7 +59,9 @@ export class ModuleGenerator extends BaseGenerator {
       'jsi-imports-bridge.h': templates.buildImportBridgeHeader(this.module),
       'jsi-imports-bridge.cpp': templates.buildImportBridgeSource(this.module),
       'jsi-exports-bridge.h': templates.buildExportBridgeHeader(this.module),
-      'jsi-exports-bridge.cpp': templates.buildExportBridgeSource(this.module),
+      'jsi-exports-bridge.cpp': templates.buildExportBridgeSource(this.module, {
+        hackAutoNumberCoerce: this.options.hackAutoNumberCoerce,
+      }),
       'static-module.h': templates.buildStaticLibraryHeader(this.module),
       'static-module.cpp': templates.buildStaticLibrarySource(this.module),
     });
@@ -78,11 +81,6 @@ export class ModuleGenerator extends BaseGenerator {
       `${this.module.name}.imports.json`,
       JSON.stringify(this.module.generatedImports, null, 2)
     );
-
-    // await fs.writeFile(
-    //   this.outputPathTo(`${this.module.name}.metadata.json`),
-    //   JSON.stringify(this.module.fields, null, 2)
-    // );
   }
 
   public async generatingFromModule<R>(

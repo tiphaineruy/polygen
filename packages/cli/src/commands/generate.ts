@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import consola from 'consola';
 import { oraPromise } from 'ora';
 import chalk from 'chalk';
@@ -12,18 +12,37 @@ import {
 } from '@callstack/polygen-codegen';
 import { W2CGenerator, W2CModule } from '@callstack/polygen-codegen/w2c';
 
-const command = new Command('generate').description(
-  'Generates React Native Modules from Wasm'
-);
+const command = new Command('generate')
+  .description('Generates React Native Modules from Wasm')
+  .addOption(
+    new Option('-o, --output-dir <outputDir>', 'Path to output directory')
+  )
+  .addOption(new Option('-f, --force', 'Generate code even if not outdated'))
+  .addOption(
+    new Option(
+      '--force-number-coercion',
+      'Force number coercion in module exports'
+    )
+  );
+interface Options {
+  outputDir?: string;
+  force?: boolean;
+  forceNumberCoercion?: boolean;
+}
 
-command.action(async () => {
+command.action(async (options: Options) => {
   const project = await Project.findClosest();
+  if (options.outputDir) {
+    consola.info(`Using ${chalk.dim(options.outputDir)} as output directory`);
+    project.updateOptionsInMemory({ outputDirectory: options.outputDir });
+  }
 
   const w2cGenerator = new W2CGenerator({
     outputDirectory: project.fullOutputDirectory,
     singleProject: true,
     generateMetadata: true,
-    forceGenerate: true,
+    forceGenerate: options.force ?? false,
+    hackAutoNumberCoerce: options.forceNumberCoercion ?? false,
   });
 
   const modules = await project.getWebAssemblyModules();
