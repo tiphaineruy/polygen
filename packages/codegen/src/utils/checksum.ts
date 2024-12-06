@@ -2,9 +2,10 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 
 /**
- * Computes SHA-256 checksum of specified file, and returns the buffer.
+ * Computes the SHA-256 checksum of a file located at the given path and returns it as a Buffer.
  *
- * @param path
+ * @param path The path to the file for which the checksum is to be computed.
+ * @return A promise that resolves to a Buffer containing the computed checksum.
  */
 export function computeFileChecksumBuffer(path: string): Promise<Buffer> {
   return new Promise((resolve, reject) => {
@@ -17,12 +18,13 @@ export function computeFileChecksumBuffer(path: string): Promise<Buffer> {
 }
 
 /**
- * Computes SHA-256 checksum of specified data, and returns the buffer.
+ * Computes the SHA-256 checksum of the provided data buffer.
  *
- * @param data
+ * @param data - The data for which the checksum is to be computed, provided as an ArrayBuffer.
+ * @return A Buffer containing the SHA-256 checksum of the input data.
  */
-export function computeChecksumBuffer(data: Buffer): Buffer {
+export function computeChecksumBuffer(data: ArrayBuffer): Buffer {
   const hash = crypto.createHash('sha256');
-  hash.update(data);
+  hash.update(Buffer.from(data));
   return hash.digest();
 }

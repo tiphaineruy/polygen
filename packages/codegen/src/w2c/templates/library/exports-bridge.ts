@@ -1,12 +1,10 @@
 import { HEADER } from '../common.js';
-import { W2CModule } from '../../module.js';
-import type {
-  GeneratedFunctionExport,
-  GeneratedMemoryExport,
-} from '../../types.js';
+import { W2CModuleContext } from '../../context.js';
+import type { GeneratedExport, GeneratedFunctionExport } from '../../types.js';
 import stripIndent from 'strip-indent';
+import type { ModuleMemory } from '@callstack/wasm-parser';
 
-export function buildExportBridgeHeader(module: W2CModule) {
+export function buildExportBridgeHeader(module: W2CModuleContext) {
   return `
     ${HEADER}
     #pragma once
@@ -14,14 +12,14 @@ export function buildExportBridgeHeader(module: W2CModule) {
 
     namespace facebook::react {
 
-    jsi::Object create${module.generatedClassName}Exports(jsi::Runtime &rt, jsi::Object&& importObject);
+    jsi::Object create${module.codegen.mangledName}Exports(jsi::Runtime &rt, jsi::Object&& importObject);
 
     }
 `;
 }
 
 export function buildExportBridgeSource(
-  module: W2CModule,
+  module: W2CModuleContext,
   { hackAutoNumberCoerce }: { hackAutoNumberCoerce?: boolean } = {}
 ) {
   hackAutoNumberCoerce ??= false;
@@ -36,21 +34,22 @@ export function buildExportBridgeSource(
   `;
 
   function makeExportFunc(func: GeneratedFunctionExport) {
-    const args = func.params
+    const args = func.parameterTypeNames
       .map(
         (_, i) =>
           `, ${hackAutoNumberCoerce ? `getNumericVal(args[${i}])` : `args[${i}].asNumber()`}`
       )
       .join('');
-    const res = func.hasReturn ? 'auto res = ' : '';
-    const returnPart = func.hasReturn
-      ? 'return jsi::Value { (double)res };'
-      : 'return jsi::Value::undefined()';
+    const res = func.target.resultTypes.length > 0 ? 'auto res = ' : '';
+    const returnPart =
+      func.target.resultTypes.length > 0
+        ? 'return jsi::Value { (double)res };'
+        : 'return jsi::Value::undefined()';
 
     return `
       /* export: '${func.name}' */
-      exports.setProperty(rt, "${func.name}", HOSTFN("${func.name}", ${func.params.length}) {
-        auto nativeState = get${module.contextClassName}Context(rt, thisValue);
+      exports.setProperty(rt, "${func.name}", HOSTFN("${func.name}", ${func.parameterTypeNames.length}) {
+        auto nativeState = get${module.turboModule.contextClassName}Context(rt, thisValue);
         assert(nativeState != nullptr);
         ${res}${func.generatedFunctionName}(&nativeState->rootCtx${args});
         ${returnPart};
@@ -58,7 +57,7 @@ export function buildExportBridgeSource(
     `;
   }
 
-  function makeExportMemory(mem: GeneratedMemoryExport) {
+  function makeExportMemory(mem: GeneratedExport<ModuleMemory>) {
     return `
       /* exported memory: '${mem.name}' */
       {
@@ -70,7 +69,7 @@ export function buildExportBridgeSource(
     `;
   }
 
-  const initArgs = module.importedModules
+  const initArgs = module.codegen.importedModules
     .map((mod) => `, &inst->${mod.generatedRootContextFieldName}`)
     .join('');
 
@@ -85,34 +84,34 @@ export function buildExportBridgeSource(
     ${hackAutoNumberCoerce ? numberCoerceFunc : ''}
 
     namespace facebook::react {
-      std::shared_ptr<${module.contextClassName}> get${module.contextClassName}Context(jsi::Runtime& rt, const jsi::Value& val) {
+      std::shared_ptr<${module.turboModule.contextClassName}> get${module.turboModule.contextClassName}Context(jsi::Runtime& rt, const jsi::Value& val) {
         auto obj = val.asObject(rt);
         assert(obj.hasNativeState(rt));
-        auto ctx = std::dynamic_pointer_cast<${module.contextClassName}>(obj.getNativeState(rt));
+        auto ctx = std::dynamic_pointer_cast<${module.turboModule.contextClassName}>(obj.getNativeState(rt));
         assert(ctx != nullptr);
         return ctx;
       }
 
-      jsi::Object create${module.generatedClassName}Exports(jsi::Runtime &rt, jsi::Object&& importObject) {
+      jsi::Object create${module.turboModule.generatedClassName}Exports(jsi::Runtime &rt, jsi::Object&& importObject) {
         jsi::Object mod { rt };
 
         if (!wasm_rt_is_initialized()) {
           wasm_rt_init();
         }
 
-        auto inst = std::make_shared<${module.contextClassName}>(rt, std::move(importObject));
-        wasm2c_${module.mangledName}_instantiate(&inst->rootCtx${initArgs});
+        auto inst = std::make_shared<${module.turboModule.contextClassName}>(rt, std::move(importObject));
+        wasm2c_${module.codegen.mangledName}_instantiate(&inst->rootCtx${initArgs});
 
         mod.setNativeState(rt, inst);
 
         // Memories
         jsi::Object memories {rt};
-        ${[...module.getGeneratedExportedMemories().map(makeExportMemory)].join('\n        ')}
+        ${module.codegen.exportedMemories.map(makeExportMemory).join('\n        ')}
         mod.setProperty(rt, "memories", std::move(memories));
 
         // Exported functions
         jsi::Object exports {rt};
-        ${[...module.getGeneratedExportedFunctions().map(makeExportFunc)].join('\n        ')}
+        ${module.codegen.exportedFunctions.map(makeExportFunc).join('\n        ')}
         exports.setNativeState(rt, inst);
         mod.setProperty(rt, "exports", std::move(exports));
 

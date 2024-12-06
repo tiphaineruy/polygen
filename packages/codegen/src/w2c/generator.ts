@@ -1,8 +1,8 @@
 import path from 'path';
-import { W2CModule } from './module.js';
-import { WebAssemblyModule } from '../webassembly/module.js';
+import { W2CModuleContext } from './context.js';
 import { ModuleGenerator } from './generators/module-generator.js';
 import { HostGenerator } from './generators/host-generator.js';
+import fs from 'node:fs/promises';
 
 const UMBRELLA_PROJECT_NAME = '@host';
 
@@ -65,23 +65,31 @@ export class W2CGenerator {
    *
    * @param module
    */
-  public async generateModule(module: WebAssemblyModule): Promise<W2CModule> {
-    const w2cModule = new W2CModule(module);
-    const moduleOutputDir = this.outputPathForModule(w2cModule);
+  public async generateModule(modulePath: string): Promise<W2CModuleContext> {
+    const moduleContents = await fs.readFile(modulePath, { encoding: null });
+    const moduleContext = new W2CModuleContext(
+      moduleContents.buffer as ArrayBuffer,
+      modulePath
+    );
+    const moduleOutputDir = this.outputPathForModule(moduleContext);
 
-    const moduleGenerator = new ModuleGenerator(w2cModule, moduleOutputDir, {
-      renderMetadata: this.options.generateMetadata,
-      forceGenerate: this.options.forceGenerate,
-      hackAutoNumberCoerce: this.options.hackAutoNumberCoerce,
-    });
+    const moduleGenerator = new ModuleGenerator(
+      moduleContext,
+      moduleOutputDir,
+      {
+        renderMetadata: this.options.generateMetadata,
+        forceGenerate: this.options.forceGenerate,
+        hackAutoNumberCoerce: this.options.hackAutoNumberCoerce,
+      }
+    );
     await moduleGenerator.generate();
-    return w2cModule;
+    return moduleContext;
   }
 
   /**
    * Generates all code for specified WebAssembly module.
    */
-  public async generateHostModule(modules: W2CModule[]) {
+  public async generateHostModule(modules: W2CModuleContext[]) {
     const moduleOutputDir = path.join(
       this.options.outputDirectory,
       UMBRELLA_PROJECT_NAME
@@ -91,7 +99,7 @@ export class W2CGenerator {
     return await hostGenerator.generate();
   }
 
-  protected outputPathForModule(module: W2CModule) {
+  protected outputPathForModule(module: W2CModuleContext) {
     if (this.options.singleProject) {
       return path.join(
         this.options.outputDirectory,

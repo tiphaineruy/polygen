@@ -15,6 +15,7 @@ export interface ModuleFunction {
 export interface ModuleGlobal {
   kind: 'global';
   type: ValueType;
+  isMutable: boolean;
 }
 
 /**
@@ -48,16 +49,16 @@ export type ModuleSymbol =
 /**
  * Represents an import in a WebAssembly module.
  */
-export interface ModuleImport {
+export interface ModuleImport<T = ModuleSymbol> {
   module: string;
   name: string;
-  target: ModuleSymbol;
+  target: T;
 }
 
 /**
  * Represents an export in a WebAssembly module.
  */
-export interface ModuleExport {
+export interface ModuleExport<T = ModuleSymbol> {
   name: string;
-  target: ModuleSymbol;
+  target: T;
 }

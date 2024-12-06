@@ -46,6 +46,7 @@ describe('BinaryReader', () => {
     reader.skipUntilByte(3);
 
     expect(reader.currentOffset).toBe(3);
+    expect(reader.readByte()).toBe(4);
   });
 
   it('should read a sequence of bytes', () => {
@@ -242,5 +243,21 @@ describe('BinaryReader', () => {
 
       expect(reader.readSignedLEB128()).toBe(-624485);
     });
+  });
+
+  it('should not read excessive bytes when reading LEB128 #1', () => {
+    const buffer = new Uint8Array([0xe5, 0x8e, 0x26, 0x00, 0x01]).buffer;
+    const reader = new BinaryReader(buffer, ByteOrder.LittleEndian);
+
+    expect(reader.readUnsignedLEB128()).toBe(624485);
+    expect(reader.currentOffset).toBe(3);
+  });
+
+  it('should not read excessive bytes when reading LEB128 #2', () => {
+    const buffer = new Uint8Array([0x10, 0x1, 0x00]).buffer;
+    const reader = new BinaryReader(buffer, ByteOrder.LittleEndian);
+
+    expect(reader.readUnsignedLEB128()).toBe(0x10);
+    expect(reader.currentOffset).toBe(1);
   });
 });

@@ -73,10 +73,12 @@ export function readResultType(reader: BinaryReader): ResultType {
 }
 
 export function readFunctionType(reader: BinaryReader): FunctionType {
+  const startOffset = reader.currentOffset;
   const byte = reader.readByte();
   if (byte !== FUNC_BYTE) {
     throw new WebAssemblyDecodeError(
-      `Could not read 'functype', unexpected byte: ${byte.toString(16)}, expected '${FUNC_BYTE}'`
+      `Could not read 'functype', unexpected byte: ${byte.toString(16)}, expected '${FUNC_BYTE}'`,
+      startOffset
     );
   }
 
@@ -86,6 +88,7 @@ export function readFunctionType(reader: BinaryReader): FunctionType {
 }
 
 export function readLimits(reader: BinaryReader): Limits {
+  const startOffset = reader.currentOffset;
   const byte = reader.readByte();
   if (byte === OPEN_LIMIT_BYTE) {
     const min = reader.readUnsignedLEB128();
@@ -96,7 +99,8 @@ export function readLimits(reader: BinaryReader): Limits {
     return { min, max };
   } else {
     throw new WebAssemblyDecodeError(
-      `Could not read 'limits', unexpected byte: ${byte.toString(16)}, expected '${OPEN_LIMIT_BYTE}' or '${CLOSED_LIMIT_BYTE}'`
+      `Could not read 'limits', unexpected byte: ${byte.toString(16)}, expected '${OPEN_LIMIT_BYTE}' or '${CLOSED_LIMIT_BYTE}'`,
+      startOffset
     );
   }
 }
@@ -113,10 +117,12 @@ export function readTableType(reader: BinaryReader): TableType {
 
 export function readGlobalType(reader: BinaryReader): GlobalType {
   const valueType = readValType(reader);
+  const startOffset = reader.currentOffset;
   const byte = reader.readByte();
   if (byte !== VAR_MUTABLE_BYTE && byte !== VAR_IMMUTABLE_BYTE) {
     throw new WebAssemblyDecodeError(
-      `Could not read 'mut', unexpected byte: ${byte.toString(16)}, expected one of [${VAR_MUTABLE_BYTE.toString(16)}, ${VAR_IMMUTABLE_BYTE.toString(16)}]}]`
+      `Could not read 'mut', unexpected byte: ${byte.toString(16)}, expected one of [${VAR_MUTABLE_BYTE.toString(16)}, ${VAR_IMMUTABLE_BYTE.toString(16)}]}]`,
+      startOffset
     );
   }
   const isMutable = byte === VAR_MUTABLE_BYTE;

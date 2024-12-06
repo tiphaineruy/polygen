@@ -1,6 +1,6 @@
 import type {
   CustomSection,
-  Descriptor,
+  ImportDescriptor,
   Export,
   ExportSection,
   FunctionSection,
@@ -12,6 +12,7 @@ import type {
   Section,
   TableSection,
   TypeSection,
+  ExportDescriptor,
 } from './types.js';
 import { BinaryReader } from '../helpers/binary-reader.js';
 import { readString, readVector } from './utils.js';
@@ -68,7 +69,45 @@ const HANDLERS = new Map<number, SectionReader>([
  *         The type is one of 'function', 'table', 'memory', or 'global'.
  * @throws WebAssemblyDecodeError if an unknown descriptor byte is encountered.
  */
-function readDescriptor(reader: BinaryReader): Descriptor {
+function readImportDescriptor(reader: BinaryReader): ImportDescriptor {
+  const startOffset = reader.currentOffset;
+  const byte = reader.readByte();
+  switch (byte) {
+    case 0: {
+      const index = reader.readUnsignedLEB128();
+      return { type: 'function', index };
+    }
+    case 1: {
+      const table = readTableType(reader);
+      return { type: 'table', table };
+    }
+    case 2: {
+      const memory = readMemoryType(reader);
+      return { type: 'memory', memory };
+    }
+    case 3: {
+      const global = readGlobalType(reader);
+      return { type: 'global', global };
+    }
+    default:
+      throw new WebAssemblyDecodeError(
+        `Unknown descriptor '${byte.toString(16)}', expected one of [0x00, 0x01, 0x02, 0x03]`,
+        startOffset
+      );
+  }
+}
+
+/**
+ * Reads the descriptor from the given BinaryReader and returns a Descriptor object.
+ *
+ * @param reader - An instance of BinaryReader used to read the descriptor information.
+ * @return A Descriptor object that represents the type and index
+ *         of the descriptor read from the binary data.
+ *         The type is one of 'function', 'table', 'memory', or 'global'.
+ * @throws WebAssemblyDecodeError if an unknown descriptor byte is encountered.
+ */
+function readExportDescriptor(reader: BinaryReader): ExportDescriptor {
+  const startOffset = reader.currentOffset;
   const byte = reader.readByte();
   const index = reader.readUnsignedLEB128();
   switch (byte) {
@@ -82,7 +121,8 @@ function readDescriptor(reader: BinaryReader): Descriptor {
       return { type: 'global', index };
     default:
       throw new WebAssemblyDecodeError(
-        `Unknown descriptor '${byte.toString(16)}', expected one of [0x00, 0x01, 0x02, 0x03]`
+        `Unknown descriptor '${byte.toString(16)}', expected one of [0x00, 0x01, 0x02, 0x03]`,
+        startOffset
       );
   }
 }
@@ -143,7 +183,7 @@ function readTypeSection(reader: BinaryReader): TypeSection {
 }
 
 /**
- * Reads a import section from a binary reader and returns its representation.
+ * Reads an import section from a binary reader and returns its representation.
  *
  * This function assumes the binary reader points to beginning of the section.
  *
@@ -152,11 +192,10 @@ function readTypeSection(reader: BinaryReader): TypeSection {
  */
 function readImportSection(reader: BinaryReader): ImportSection {
   function readImport(): Import {
-    return {
-      module: readString(reader),
-      name: readString(reader),
-      descriptor: readDescriptor(reader),
-    };
+    const module = readString(reader);
+    const name = readString(reader);
+    const descriptor = readImportDescriptor(reader);
+    return { module, name, descriptor };
   }
   const imports = readVector(reader, readImport);
   return { type: 'import', imports };
@@ -229,10 +268,9 @@ function readGlobalSection(reader: BinaryReader): GlobalSection {
  */
 function readExportSection(reader: BinaryReader): ExportSection {
   function readExport(): Export {
-    return {
-      name: readString(reader),
-      descriptor: readDescriptor(reader),
-    };
+    const name = readString(reader);
+    const descriptor = readExportDescriptor(reader);
+    return { name, descriptor };
   }
   const exports = readVector(reader, readExport);
   return { type: 'export', exports };
@@ -247,16 +285,26 @@ function readExportSection(reader: BinaryReader): ExportSection {
  */
 export function* readSections(reader: BinaryReader): IterableIterator<Section> {
   while (!reader.isEmpty) {
+    const startOffset = reader.currentOffset;
     const [id, size] = readSectionHeader(reader);
+    const end = reader.currentOffset + size;
     const handler = HANDLERS.get(id);
     if (!handler) {
       throw new WebAssemblyDecodeError(
-        `Unknown section with ID '${id.toString(16)}'`
+        `Unknown section with ID '${id.toString(16)}'`,
+        startOffset
       );
     }
     const section = handler(reader, size);
     if (section) {
       yield section;
+    }
+
+    if (reader.currentOffset !== end) {
+      throw new WebAssemblyDecodeError(
+        `Section handler for ID '${id}' did not consume all bytes, ${end - reader.currentOffset} bytes remaining`,
+        reader.currentOffset
+      );
     }
   }
 }

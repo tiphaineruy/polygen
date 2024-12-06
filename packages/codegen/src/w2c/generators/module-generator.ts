@@ -1,5 +1,5 @@
 import consola from 'consola';
-import type { W2CModule } from '../module.js';
+import type { W2CModuleContext } from '../context.js';
 import { BaseGenerator } from './base-generator.js';
 import { generateCSources } from '../wasm2c.js';
 import * as templates from '../templates/library/index.js';
@@ -11,16 +11,16 @@ export interface ModuleGeneratorOptions {
 }
 
 export class ModuleGenerator extends BaseGenerator {
-  private readonly module: W2CModule;
+  private readonly context: W2CModuleContext;
   private readonly options: ModuleGeneratorOptions;
 
   public constructor(
-    module: W2CModule,
+    module: W2CModuleContext,
     outputDirectory: string,
     options: ModuleGeneratorOptions = {}
   ) {
     super(outputDirectory);
-    this.module = module;
+    this.context = module;
     this.options = options;
   }
 
@@ -38,11 +38,11 @@ export class ModuleGenerator extends BaseGenerator {
   }
 
   public async generateCSource() {
-    const outputPath = this.outputPathTo(this.module.name);
+    const outputPath = this.outputPathTo(this.context.name);
     const generatedFiles = [`${outputPath}.c`, `${outputPath}.h`];
 
     return this.generatingFromModule(generatedFiles, async () => {
-      await generateCSources(this.module.sourceModulePath, outputPath);
+      await generateCSources(this.context.sourceModulePath, outputPath);
     });
   }
 
@@ -56,14 +56,17 @@ export class ModuleGenerator extends BaseGenerator {
 
   public async generateJSIBridge() {
     await this.writeAllTo({
-      'jsi-imports-bridge.h': templates.buildImportBridgeHeader(this.module),
-      'jsi-imports-bridge.cpp': templates.buildImportBridgeSource(this.module),
-      'jsi-exports-bridge.h': templates.buildExportBridgeHeader(this.module),
-      'jsi-exports-bridge.cpp': templates.buildExportBridgeSource(this.module, {
-        hackAutoNumberCoerce: this.options.hackAutoNumberCoerce,
-      }),
-      'static-module.h': templates.buildStaticLibraryHeader(this.module),
-      'static-module.cpp': templates.buildStaticLibrarySource(this.module),
+      'jsi-imports-bridge.h': templates.buildImportBridgeHeader(this.context),
+      'jsi-imports-bridge.cpp': templates.buildImportBridgeSource(this.context),
+      'jsi-exports-bridge.h': templates.buildExportBridgeHeader(this.context),
+      'jsi-exports-bridge.cpp': templates.buildExportBridgeSource(
+        this.context,
+        {
+          hackAutoNumberCoerce: this.options.hackAutoNumberCoerce,
+        }
+      ),
+      'static-module.h': templates.buildStaticLibraryHeader(this.context),
+      'static-module.cpp': templates.buildStaticLibrarySource(this.context),
     });
   }
 
@@ -73,13 +76,13 @@ export class ModuleGenerator extends BaseGenerator {
     }
 
     await this.writeTo(
-      `${this.module.name}.exports.json`,
-      JSON.stringify(this.module.generatedExports, null, 2)
+      `${this.context.name}.exports.json`,
+      JSON.stringify(this.context.codegen.exports, null, 2)
     );
 
     await this.writeTo(
-      `${this.module.name}.imports.json`,
-      JSON.stringify(this.module.generatedImports, null, 2)
+      `${this.context.name}.imports.json`,
+      JSON.stringify(this.context.codegen.imports, null, 2)
     );
   }
 
@@ -91,6 +94,6 @@ export class ModuleGenerator extends BaseGenerator {
       return cb();
     }
 
-    return this.generating<R>([this.module.sourceModulePath], targets, cb);
+    return this.generating<R>([this.context.sourceModulePath], targets, cb);
   }
 }

@@ -15,7 +15,8 @@ async function buildModuleSource(pathToModule: string): Promise<string> {
   const stat = await fs.stat(pathToModule);
 
   const result = concatBuffers(
-    ALIGNED_MAGIC_NUMBER,
+    ALIGNED_MAGIC_NUMBER.buffer,
+    // @ts-ignore
     new Uint8Array(BigUint64Array.of(BigInt(stat.size)).buffer),
     checksum,
     rawName,

@@ -1,13 +1,13 @@
 import { HEADER } from '../common.js';
-import { W2CModule } from '../../module.js';
+import { W2CModuleContext } from '../../context.js';
 import type { GeneratedFunctionImport, GeneratedImport } from '../../types.js';
 import stripIndent from 'strip-indent';
 
-export function buildImportBridgeHeader(module: W2CModule) {
-  const imports = module.importedModules;
+export function buildImportBridgeHeader(module: W2CModuleContext) {
+  const imports = module.codegen.importedModules;
   const importsContextDeclarations = imports.map(
     (importInfo) =>
-      `GEN_IMPORT_CONTEXT_TYPE(${importInfo.generatedContextTypeName}, ${module.generatedContextTypeName});`
+      `GEN_IMPORT_CONTEXT_TYPE(${importInfo.generatedContextTypeName}, ${module.codegen.generatedContextTypeName});`
   );
 
   return (
@@ -22,15 +22,15 @@ export function buildImportBridgeHeader(module: W2CModule) {
 
     namespace facebook::react {
 
-    class ${module.generatedClassName}ModuleContext: public jsi::NativeState {
+    class ${module.turboModule.generatedClassName}ModuleContext: public jsi::NativeState {
     public:
-      ${module.generatedClassName}ModuleContext(jsi::Runtime& rt, jsi::Object&& importObject)
+      ${module.turboModule.generatedClassName}ModuleContext(jsi::Runtime& rt, jsi::Object&& importObject)
         : importObject(std::move(importObject))
         ${imports.map((i) => `, INIT_IMPORT_CTX(${i.generatedRootContextFieldName}, "${i.name}")`).join('\n        ')}
       {}
 
       jsi::Object importObject;
-      ${module.generatedContextTypeName} rootCtx;
+      ${module.codegen.generatedContextTypeName} rootCtx;
       ${imports.map((i) => `${i.generatedContextTypeName} ${i.generatedRootContextFieldName};`).join('\n      ')}
     };
     }
@@ -38,18 +38,18 @@ export function buildImportBridgeHeader(module: W2CModule) {
   );
 }
 
-export function buildImportBridgeSource(module: W2CModule) {
-  function makeImportFunc(func: GeneratedFunctionImport) {
+export function buildImportBridgeSource(module: W2CModuleContext) {
+  function makeImportFunc(func: GeneratedFunctionImport): string {
     const declarationParams = func.parameterTypeNames
       .map((name, i) => `, ${name} arg${i}`)
       .join(' ');
 
-    const args = func.params
+    const args = func.parameterTypeNames
       .map((_, i) => `, jsi::Value { (double)arg${i} }`)
       .join('');
 
-    const returnKeyword = func.hasReturn ? 'return ' : '';
-    const castSuffix = func.hasReturn ? '.asNumber()' : '';
+    const returnKeyword = func.target.resultTypes.length > 0 ? 'return ' : '';
+    const castSuffix = func.target.resultTypes.length > 0 ? '.asNumber()' : '';
 
     // TODO: get import info for this func as ctx 1st params
     return `
@@ -62,11 +62,11 @@ export function buildImportBridgeSource(module: W2CModule) {
   }
 
   function makeImport(imp: GeneratedImport): string {
-    switch (imp.type) {
-      case 'Function':
-        return makeImportFunc(imp);
+    switch (imp.target.kind) {
+      case 'function':
+        return makeImportFunc(imp as GeneratedFunctionImport);
       default:
-        console.warn('Unknown import type', imp.type);
+        console.warn('Unknown import type', imp.target.kind);
         return '';
     }
   }
@@ -82,7 +82,7 @@ export function buildImportBridgeSource(module: W2CModule) {
     extern "C" {
     #endif
 
-    ${module.generatedImports.map((i) => makeImport(i)).join('\n    ')}
+    ${module.codegen.imports.map((i) => makeImport(i)).join('\n    ')}
 
     #ifdef __cplusplus
     }

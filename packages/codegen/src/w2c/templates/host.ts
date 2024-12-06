@@ -1,5 +1,5 @@
 import { HEADER } from './common.js';
-import { W2CModule } from '../module.js';
+import { W2CModuleContext } from '../context.js';
 import stripIndent from 'strip-indent';
 import indentString from 'indent-string';
 
@@ -25,7 +25,7 @@ export function buildHostHeader() {
   );
 }
 
-export function buildHostSource(generatedModules: W2CModule[]) {
+export function buildHostSource(generatedModules: W2CModuleContext[]) {
   const moduleNames = generatedModules
     .map((module) => `"${module.name}"`)
     .join(', ')
@@ -39,13 +39,13 @@ export function buildHostSource(generatedModules: W2CModule[]) {
     .join(',\n      ')
     .trimEnd();
 
-  function makeModuleFactoryDecl(module: W2CModule) {
-    return `std::unique_ptr<Module> ${module.moduleFactoryFunctionName}();`;
+  function makeModuleFactoryDecl(module: W2CModuleContext) {
+    return `std::unique_ptr<Module> ${module.turboModule.moduleFactoryFunctionName}();`;
   }
 
-  function makeModuleHandler(module: W2CModule) {
+  function makeModuleHandler(module: W2CModuleContext) {
     return stripIndent(
-      `if (name == "${module.name}") { return ${module.moduleFactoryFunctionName}(); }`
+      `if (name == "${module.name}") { return ${module.turboModule.moduleFactoryFunctionName}(); }`
     );
   }
 

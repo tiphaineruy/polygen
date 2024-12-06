@@ -202,7 +202,7 @@ export class BinaryReader {
    * @return The sequence of bytes read from the binary data.
    */
   readBytes(n: number): ArrayBuffer {
-    const value = this.buffer.slice(this.offset, n);
+    const value = this.buffer.slice(this.offset, this.offset + n);
     this.offset += n;
     return value;
   }

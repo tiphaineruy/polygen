@@ -44,16 +44,16 @@ export interface DescriptorValue<T extends string> {
   index: number;
 }
 
-export type Descriptor =
-  | DescriptorValue<'function'>
-  | DescriptorValue<'table'>
-  | DescriptorValue<'memory'>
-  | DescriptorValue<'global'>;
+export type ImportDescriptor =
+  | { type: 'function'; index: number }
+  | { type: 'table'; table: TableType }
+  | { type: 'memory'; memory: MemoryType }
+  | { type: 'global'; global: GlobalType };
 
 export interface Import {
   module: string;
   name: string;
-  descriptor: Descriptor;
+  descriptor: ImportDescriptor;
 }
 
 export interface ImportSection {
@@ -85,9 +85,15 @@ export interface GlobalSection {
   globals: Global[];
 }
 
+export type ExportDescriptor =
+  | { type: 'function'; index: number }
+  | { type: 'table'; index: number }
+  | { type: 'memory'; index: number }
+  | { type: 'global'; index: number };
+
 export interface Export {
   name: string;
-  descriptor: Descriptor;
+  descriptor: ExportDescriptor;
 }
 
 export interface ExportSection {

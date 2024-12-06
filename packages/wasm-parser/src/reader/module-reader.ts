@@ -13,10 +13,12 @@ const MAGIC = Uint8Array.of(0x00, 0x61, 0x73, 0x6d).buffer;
  * @returns Throws a WebAssemblyDecodeError if the magic number does not match the expected value.
  */
 export function readMagic(reader: BinaryReader) {
+  const startOffset = reader.currentOffset;
   const magic = reader.readBytes(4);
   if (!arrayBuffersEqual(MAGIC, magic)) {
     throw new WebAssemblyDecodeError(
-      'Specified module is not a valid binary WebAssembly module'
+      'Specified module is not a valid binary WebAssembly module',
+      startOffset
     );
   }
 }
@@ -44,9 +46,11 @@ export function* readModuleRaw(data: ArrayBuffer) {
   const reader = new BinaryReader(data, ByteOrder.LittleEndian);
   readMagic(reader);
   const version = readVersion(reader);
+  const startOffset = reader.currentOffset;
   if (version !== 1) {
     throw new WebAssemblyDecodeError(
-      `Unsupported WebAssembly version '${version}'`
+      `Unsupported WebAssembly version '${version}'`,
+      startOffset
     );
   }
 

@@ -12,16 +12,6 @@ export function readRawVector(reader: BinaryReader): ArrayBuffer {
 }
 
 /**
- * Reads a length-encoded sequence of bytes from the binary data.
- *
- * @return The sequence of bytes read from the binary data.
- */
-export function readSliceU32(reader: BinaryReader): ArrayBuffer {
-  const length = reader.readUint32();
-  return reader.readBytes(length);
-}
-
-/**
  * Reads a length-encoded UTF-8 string from the binary data.
  *
  * @return The UTF-8 string read from the binary data.
@@ -44,12 +34,14 @@ export function readLookup<TValue>(
   map: Map<number, TValue>,
   debugName: string
 ): TValue {
+  const startOffset = reader.currentOffset;
   const byte = reader.readByte();
   const value = map.get(byte);
   if (!value) {
     const expected = [...map.keys()];
     throw new WebAssemblyDecodeError(
-      `Could not read '${debugName}', unexpected byte: ${byte.toString(16)}, expected one of [${expected.join(', ')}]`
+      `Could not read '${debugName}', unexpected byte: ${byte.toString(16)}, expected one of [${expected.join(', ')}]`,
+      startOffset
     );
   }
 
