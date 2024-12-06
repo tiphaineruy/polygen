@@ -5,6 +5,7 @@ ws_dir = ws_dir.parent until
   File.exist?("#{ws_dir}/node_modules/react-native-test-app/test_app.rb") ||
   ws_dir.expand_path.to_s == '/'
 require "#{ws_dir}/node_modules/react-native-test-app/test_app.rb"
+require "#{ws_dir}/node_modules/@callstack/polygen/polygen.rb"
 
 workspace 'WasmExample.xcworkspace'
 
@@ -16,6 +17,6 @@ options = {
 
 use_test_app! options do |target|
   target.app do
-    pod 'ReactNativeWebAssemblyHost', :path => "../node_modules/.polygen-out/@host"
+    install_polygen
   end
 end
