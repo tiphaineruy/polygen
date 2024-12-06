@@ -1,0 +1,22 @@
+#pragma once
+
+#include <jsi/jsi.h>
+#include <ReactNativePolygen/wasm-rt.h>
+
+namespace facebook::react {
+
+class Table: public jsi::NativeState {
+public:
+  enum class Kind: uint32_t {
+    FuncRef = 0,
+    ExternRef,
+  };
+  
+  virtual bool isOwned() const = 0;
+  virtual Kind getKind() const = 0;
+  virtual size_t getSize() const = 0;
+  virtual size_t getCapacity() const = 0;
+  virtual void grow(ptrdiff_t delta) = 0;
+};
+
+}

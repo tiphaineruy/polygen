@@ -1,6 +1,6 @@
 import { HEADER } from '../common.js';
 import { W2CModule } from '../../module.js';
-import type { GeneratedFunctionImport } from '../../types.js';
+import type { GeneratedFunctionImport, GeneratedImport } from '../../types.js';
 import stripIndent from 'strip-indent';
 
 export function buildImportBridgeHeader(module: W2CModule) {
@@ -61,6 +61,16 @@ export function buildImportBridgeSource(module: W2CModule) {
     `;
   }
 
+  function makeImport(imp: GeneratedImport): string {
+    switch (imp.type) {
+      case 'Function':
+        return makeImportFunc(imp);
+      default:
+        console.warn('Unknown import type', imp.type);
+        return '';
+    }
+  }
+
   return (
     HEADER +
     stripIndent(`
@@ -72,7 +82,7 @@ export function buildImportBridgeSource(module: W2CModule) {
     extern "C" {
     #endif
 
-    ${module.generatedImports.map((i) => makeImportFunc(i)).join('\n    ')}
+    ${module.generatedImports.map((i) => makeImport(i)).join('\n    ')}
 
     #ifdef __cplusplus
     }

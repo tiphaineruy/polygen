@@ -18,6 +18,14 @@ export enum NativeType {
 }
 
 /**
+ * WebAssembly Table element type
+ */
+export enum NativeTableElementType {
+  AnyFunc = 0,
+  ExternRef = 1,
+}
+
+/**
  * @spec https://webassembly.github.io/spec/js-api/index.html#modules
  */
 export type ImportExportKind = 'function' | 'table' | 'memory' | 'global';
@@ -81,6 +89,15 @@ export interface InternalModuleMetadata {
 }
 
 /**
+ * Representation of internal precomputed module metadata.
+ */
+export interface NativeTableDescriptor {
+  readonly initialSize: number;
+  readonly maxSize?: number;
+  readonly element: NativeTableElementType;
+}
+
+/**
  * Opaque handle representing WebAssembly Module.
  */
 export type OpaqueModuleNativeHandle = UnsafeObject;
@@ -99,6 +116,11 @@ export type OpaqueMemoryNativeHandle = UnsafeObject;
  * Opaque handle representing WebAssembly global instance.
  */
 export type OpaqueGlobalNativeHandle = UnsafeObject;
+
+/**
+ * Opaque handle representing WebAssembly Table instance.
+ */
+export type OpaqueTableNativeHandle = UnsafeObject;
 
 export interface Spec extends TurboModule {
   // Modules
@@ -126,6 +148,17 @@ export interface Spec extends TurboModule {
   ): OpaqueGlobalNativeHandle;
   getGlobalValue(instance: OpaqueGlobalNativeHandle): number;
   setGlobalValue(instance: OpaqueGlobalNativeHandle, newValue: number): void;
+
+  // Tables
+  createTable(descriptor: NativeTableDescriptor): OpaqueTableNativeHandle;
+  growTable(instance: OpaqueTableNativeHandle, delta: number): void;
+  getTableElement(instance: OpaqueTableNativeHandle, index: number): unknown;
+  setTableElement(
+    instance: OpaqueTableNativeHandle,
+    index: number,
+    value: unknown
+  ): void;
+  getTableSize(instance: OpaqueTableNativeHandle): number;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('WebAssembly');

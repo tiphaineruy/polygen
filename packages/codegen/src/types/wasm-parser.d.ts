@@ -18,7 +18,13 @@ declare module '@webassemblyjs/wasm-parser' {
 
   type TypeName = 'i32' | 'i64' | 'u32' | 'u64' | 'f32' | 'f64';
 
-  type ModuleField = ModuleFunction | ModuleImport | ModuleExport;
+  type ModuleField =
+    | ModuleFunction
+    | ModuleGlobal
+    | ModuleTable
+    | ModuleMemory
+    | ModuleImport
+    | ModuleExport;
 
   interface ModuleFunctionName {
     type: 'Identifier';
@@ -32,6 +38,37 @@ declare module '@webassemblyjs/wasm-parser' {
     results: TypeName[];
   }
 
+  interface ModuleGlobalType {
+    type: 'GlobalType';
+    valtype: TypeName;
+    mutability: 'var' | 'const';
+  }
+
+  interface ModuleGlobal {
+    type: 'Global';
+    globalType: ModuleGlobalType;
+    name?: DescriptorIdentifier;
+  }
+
+  interface ModuleLimits {
+    type: 'Limit';
+    min: number;
+    max?: number;
+  }
+
+  interface ModuleTable {
+    type: 'Table';
+    elementType: 'anyfunc';
+    limits: ModuleLimits;
+    name: DescriptorIdentifier;
+  }
+
+  interface ModuleMemory {
+    type: 'Memory';
+    limits: ModuleLimits;
+    id: DescriptorIdentifier;
+  }
+
   interface ModuleFunction {
     type: 'Func';
     name: ModuleFunctionName;
@@ -39,17 +76,23 @@ declare module '@webassemblyjs/wasm-parser' {
     body: number[];
   }
 
-  type ModuleImportDescriptor = ModuleFuncImportDescriptor;
+  type ModuleImportDescriptor =
+    | ModuleImportFunctionDescriptor
+    | ModuleImportGlobalDescriptor;
 
-  interface ModuleFuncImportDescriptor {
+  interface ModuleImportFunctionDescriptor {
     type: 'FuncImportDescr';
     id: string;
     signature: ModuleFunctionSignature;
   }
 
+  type ModuleImportGlobalDescriptor = ModuleGlobalType;
+
   type ModuleExportDescriptor =
     | ModuleExportFunctionDescriptor
-    | ModuleExportMemoryDescriptor;
+    | ModuleExportMemoryDescriptor
+    | ModuleExportGlobalDescriptor
+    | ModuleExportTableDescriptor;
 
   interface DescriptorNumericIdentifier {
     type: 'NumberLiteral';
@@ -75,6 +118,18 @@ declare module '@webassemblyjs/wasm-parser' {
   interface ModuleExportMemoryDescriptor {
     type: 'ModuleExportDescr';
     exportType: 'Memory';
+    id: DescriptorIdentifier;
+  }
+
+  interface ModuleExportGlobalDescriptor {
+    type: 'ModuleExportDescr';
+    exportType: 'Global';
+    id: DescriptorIdentifier;
+  }
+
+  interface ModuleExportTableDescriptor {
+    type: 'ModuleExportDescr';
+    exportType: 'Table';
     id: DescriptorIdentifier;
   }
 

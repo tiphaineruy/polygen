@@ -2,9 +2,7 @@
 #include <span>
 #include "bridge.h"
 #include "react-native-wasm.h"
-#include "Global.h"
-#include "Memory.h"
-#include "Module.h"
+#include "WebAssembly.h"
 #include "NativeStateHelper.h"
 
 
@@ -121,6 +119,51 @@ void ReactNativeWebAssembly::setGlobalValue(jsi::Runtime &rt, jsi::Object instan
   auto globalVar = NativeStateHelper::tryGet<Global>(rt, instance);
 
   globalVar->setValue(rt, {newValue});
+}
+
+
+// Tables
+jsi::Object ReactNativeWebAssembly::createTable(jsi::Runtime &rt, jsi::Object tableDescriptor) {
+  auto descriptor = NativeTableDescriptorBridging::fromJs(rt, tableDescriptor, this->jsInvoker_);
+  std::shared_ptr<Table> table;
+  switch (descriptor.element) {
+    case NativeTableElementType::AnyFunc:
+      table = std::make_shared<FuncRefTable>(descriptor.initialSize, descriptor.maxSize);
+      break;
+    case NativeTableElementType::ExternRef:
+      table = std::make_shared<ExternRefTable>(descriptor.initialSize, descriptor.maxSize);
+      break;
+    default:
+      assert(0);
+  }
+  
+  return NativeStateHelper::wrap(rt, table);
+}
+
+void ReactNativeWebAssembly::growTable(jsi::Runtime &rt, jsi::Object instance, double delta) {
+  auto table = NativeStateHelper::tryGet<Table>(rt, instance);
+  table->grow(delta);
+}
+
+jsi::Object ReactNativeWebAssembly::getTableElement(jsi::Runtime &rt, jsi::Object instance, double index) {
+  assert(0 && "Unsupported");
+//  auto table = NativeStateHelper::tryGet<Table>(rt, instance);
+//  
+//  auto funcTable = std::dynamic_pointer_cast<FuncRefTable>(table);
+//  if (funcTable) {
+//    auto func = funcTable->getElement(index);
+//    auto type = func.func_type;
+//    return jsi::Function::createFromHostFunction(rt, "", type, )
+//  }
+}
+
+void ReactNativeWebAssembly::setTableElement(jsi::Runtime &rt, jsi::Object instance, double index, jsi::Object value) {
+  assert(0 && "Unsupported");
+}
+
+double ReactNativeWebAssembly::getTableSize(jsi::Runtime &rt, jsi::Object instance) {
+  auto table = NativeStateHelper::tryGet<Table>(rt, instance);
+  return table->getSize();
 }
 
 }

@@ -2,7 +2,7 @@ import { SymbolSet } from './helpers/symbol-set.js';
 import type {
   ModuleExportFuncInfo,
   ModuleExportInfo,
-  ModuleExportMemInfo,
+  ModuleExportMemoryInfo,
   ModuleImportFuncInfo,
   ModuleImportInfo,
 } from './types.js';
@@ -19,6 +19,9 @@ export class WebAssemblyModule {
    */
   public readonly sourceModulePath: string;
 
+  /**
+   * SHA-256 checksum of module contents
+   */
   public readonly checksum: Buffer;
 
   /**
@@ -70,7 +73,7 @@ export class WebAssemblyModule {
   /**
    * Returns a `Set` of this module exported memories.
    */
-  public get exportedMemories(): Set<ModuleExportMemInfo> {
+  public get exportedMemories(): Set<ModuleExportMemoryInfo> {
     return this.exports.getByType('Memory');
   }
 }
