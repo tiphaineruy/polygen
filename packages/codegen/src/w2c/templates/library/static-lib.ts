@@ -1,9 +1,10 @@
 import { HEADER } from '../common.js';
-import { W2CModule } from '../../module.js';
+import { W2CModuleContext } from '../../context.js';
 import stripIndent from 'strip-indent';
+import type { ModuleSymbol } from '@callstack/wasm-parser';
 
-export function buildStaticLibraryHeader(module: W2CModule) {
-  const className = `WASM${module.generatedClassName}Module`;
+export function buildStaticLibraryHeader(module: W2CModuleContext) {
+  const className = `WASM${module.turboModule.generatedClassName}Module`;
 
   return (
     HEADER +
@@ -13,7 +14,7 @@ export function buildStaticLibraryHeader(module: W2CModule) {
 
     namespace facebook::react {
 
-    std::shared_ptr<Module> ${module.moduleFactoryFunctionName}();
+    std::shared_ptr<Module> ${module.turboModule.moduleFactoryFunctionName}();
 
     class ${className}: public StaticLibraryModule {
     public:
@@ -28,21 +29,24 @@ export function buildStaticLibraryHeader(module: W2CModule) {
   );
 }
 
-const symbolTypeMapping: Record<string, string> = {
-  Function: 'Module::SymbolKind::Function',
-  Memory: 'Module::SymbolKind::Memory',
-  Global: 'Module::SymbolKind::Global',
+const symbolTypeMapping: Record<ModuleSymbol['kind'], string> = {
+  function: 'Module::SymbolKind::Function',
+  memory: 'Module::SymbolKind::Memory',
+  global: 'Module::SymbolKind::Global',
+  table: 'Module::SymbolKind::Table',
 };
 
-export function buildStaticLibrarySource(module: W2CModule) {
-  const className = `WASM${module.generatedClassName}Module`;
-  const moduleImportsIter = module.imports
+export function buildStaticLibrarySource(module: W2CModuleContext) {
+  const className = `WASM${module.turboModule.generatedClassName}Module`;
+  const moduleImportsIter = module.codegen.imports
     .values()
-    .map((i) => `{"${i.module}", "${i.name}", ${symbolTypeMapping[i.type]}}`);
+    .map(
+      (i) => `{"${i.module}", "${i.name}", ${symbolTypeMapping[i.target.kind]}}`
+    );
   const moduleImports = [...moduleImportsIter].join(', ');
-  const moduleExportsIter = module.exports
+  const moduleExportsIter = module.codegen.exports
     .values()
-    .map((e) => `{"${e.name}", ${symbolTypeMapping[e.type]}}`);
+    .map((e) => `{"${e.name}", ${symbolTypeMapping[e.target.kind]}}`);
   const moduleExports = [...moduleExportsIter].join(', ');
 
   return (
@@ -56,7 +60,7 @@ export function buildStaticLibrarySource(module: W2CModule) {
   const std::vector<Module::ImportInfo> imports { ${moduleImports} };
   const std::vector<Module::ExportInfo> exports { ${moduleExports} };
 
-  std::shared_ptr<Module> ${module.moduleFactoryFunctionName}() {
+  std::shared_ptr<Module> ${module.turboModule.moduleFactoryFunctionName}() {
     return std::make_shared<${className}>("${module.name}");
   }
 
@@ -69,7 +73,7 @@ export function buildStaticLibrarySource(module: W2CModule) {
   }
 
   jsi::Object ${className}::createInstance(jsi::Runtime& rt, jsi::Object&& importObject) const {
-    return create${module.generatedClassName}Exports(rt, std::move(importObject));
+    return create${module.turboModule.generatedClassName}Exports(rt, std::move(importObject));
   }
 
   }

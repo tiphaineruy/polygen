@@ -7,6 +7,8 @@ namespace facebook::react {
 
 class Table: public jsi::NativeState {
 public:
+  const size_t DEFAULT_MAX_SIZE = 512;
+  
   enum class Kind: uint32_t {
     FuncRef = 0,
     ExternRef,

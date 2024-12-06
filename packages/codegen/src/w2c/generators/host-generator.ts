@@ -1,11 +1,11 @@
-import { W2CModule } from '../module.js';
+import { W2CModuleContext } from '../context.js';
 import { BaseGenerator } from './base-generator.js';
 import * as templates from '../templates/host.js';
 
 export class HostGenerator extends BaseGenerator {
-  private readonly modules: W2CModule[];
+  private readonly modules: W2CModuleContext[];
 
-  public constructor(modules: W2CModule[], outputDirectory: string) {
+  public constructor(modules: W2CModuleContext[], outputDirectory: string) {
     super(outputDirectory);
     this.modules = modules;
   }

@@ -1,60 +1,29 @@
 import type {
-  ModuleExportFuncInfo,
-  ModuleExportGlobalInfo,
-  ModuleExportMemoryInfo,
-  ModuleExportTableInfo,
-  ModuleImportFuncInfo,
-  ModuleImportGlobalInfo,
-} from '../webassembly/types.js';
+  ModuleExport,
+  ModuleFunction,
+  ModuleImport,
+  ModuleSymbol,
+} from '@callstack/wasm-parser';
+import type { W2CCodegenImportedModule } from './codegen-context.js';
 
-export interface ImportedModuleInfo {
-  name: string;
-  mangledName: string;
-  generatedContextTypeName: string;
-  generatedRootContextFieldName: string;
-}
-
-export interface GeneratedFunctionImport extends ModuleImportFuncInfo {
-  mangledName: string;
-  moduleInfo: ImportedModuleInfo;
+export interface GeneratedFunctionInfo {
   generatedFunctionName: string;
   parameterTypeNames: string[];
   returnTypeName: string;
-  hasReturn: boolean;
 }
 
-export interface GeneratedGlobalImport extends ModuleImportGlobalInfo {
+export interface GeneratedImport<T = ModuleSymbol> extends ModuleImport<T> {
   mangledName: string;
-  moduleInfo: ImportedModuleInfo;
+  moduleInfo: W2CCodegenImportedModule;
 }
 
-export type GeneratedImport = GeneratedFunctionImport | GeneratedGlobalImport;
+export type GeneratedFunctionImport = GeneratedImport<ModuleFunction> &
+  GeneratedFunctionInfo;
 
-export interface GeneratedFunctionExport extends ModuleExportFuncInfo {
-  mangledName: string;
-  generatedFunctionName: string;
-  parameterTypeNames: string[];
-  returnTypeName: string;
-  hasReturn: boolean;
-}
-
-export interface GeneratedMemoryExport extends ModuleExportMemoryInfo {
+export interface GeneratedExport<T = ModuleSymbol> extends ModuleExport<T> {
   mangledName: string;
   mangledAccessorFunction: string;
 }
 
-export interface GeneratedGlobalExport extends ModuleExportGlobalInfo {
-  mangledName: string;
-  mangledAccessorFunction: string;
-}
-
-export interface GeneratedTableExport extends ModuleExportTableInfo {
-  mangledName: string;
-  mangledAccessorFunction: string;
-}
-
-export type GeneratedExport =
-  | GeneratedFunctionExport
-  | GeneratedMemoryExport
-  | GeneratedGlobalExport
-  | GeneratedTableExport;
+export type GeneratedFunctionExport = GeneratedExport<ModuleFunction> &
+  GeneratedFunctionInfo;

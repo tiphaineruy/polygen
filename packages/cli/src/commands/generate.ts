@@ -4,13 +4,9 @@ import consola from 'consola';
 import { oraPromise } from 'ora';
 import chalk from 'chalk';
 import { Project } from '@callstack/polygen-core-build';
-import {
-  type AnySymbol,
-  generateWasmJSModule,
-  loadWasmModuleFromFile,
-  SymbolSet,
-} from '@callstack/polygen-codegen';
-import { W2CGenerator, W2CModule } from '@callstack/polygen-codegen/w2c';
+import { generateWasmJSModule } from '@callstack/polygen-codegen';
+import { W2CGenerator, W2CModuleContext } from '@callstack/polygen-codegen/w2c';
+import type { ModuleSymbol } from '@callstack/wasm-parser';
 
 const command = new Command('generate')
   .description('Generates React Native Modules from Wasm')
@@ -24,6 +20,7 @@ const command = new Command('generate')
       'Force number coercion in module exports'
     )
   );
+
 interface Options {
   outputDir?: string;
   force?: boolean;
@@ -49,44 +46,43 @@ command.action(async (options: Options) => {
   // const pathToRuntimeHeader = path.join(ASSETS_DIR, 'wasm-rt-weak.h');
 
   consola.info('Found', chalk.bold(modules.length), 'WebAssembly module(s)');
-  const generatedModules: W2CModule[] = [];
+  const generatedModules: W2CModuleContext[] = [];
 
   for (const mod of modules) {
     const modPath = project.pathToSource(mod);
-    const parsedModule = await oraPromise(
-      loadWasmModuleFromFile(modPath),
-      `Loading ${chalk.magenta(mod)} metadata`
-    );
 
     const generatedModule = await oraPromise(
       async () => {
-        const result = await w2cGenerator.generateModule(parsedModule);
+        const result = await w2cGenerator.generateModule(modPath);
         generatedModules.push(result);
         return result;
       },
       `Processing ${chalk.magenta(mod)} module`
     );
 
-    const imports = generatedModule.imports;
-    const exports = generatedModule.exports;
-    console.log('Mod exports: ', exports);
+    const imports = generatedModule.codegen.imports;
+    const exports = generatedModule.codegen.exports;
     const hglt = chalk.dim;
 
-    function statsOf<T extends AnySymbol<TKey>, TKey = T['type']>(
-      set: SymbolSet<AnySymbol<TKey>>
-    ): string {
+    function statsOf(set: ModuleSymbol[]): string {
       const highlight = chalk.dim;
-      const countOf = (type: TKey) => set.byType.get(type)?.size ?? 0;
+      const grouped = Object.groupBy(set, (s) => s.kind);
+      const countOf = (type: ModuleSymbol['kind']) =>
+        grouped[type]?.length ?? 0;
       return [
-        `${highlight(countOf('Function' as TKey))} functions`,
-        `${highlight(countOf('Memory' as TKey))} memories`,
-        `${highlight(countOf('Global' as TKey))} globals`,
-        `${highlight(countOf('Table' as TKey))} tables`,
+        `${highlight(countOf('function'))} functions`,
+        `${highlight(countOf('memory'))} memories`,
+        `${highlight(countOf('global'))} globals`,
+        `${highlight(countOf('table'))} tables`,
       ].join(', ');
     }
 
-    consola.info(`  Found ${hglt(imports.size)} imports (${statsOf(imports)})`);
-    consola.info(`  Found ${hglt(exports.size)} exports (${statsOf(exports)})`);
+    consola.info(
+      `  Found ${hglt(imports.length)} imports (${statsOf(imports.map((i) => i.target))})`
+    );
+    consola.info(
+      `  Found ${hglt(exports.length)} exports (${statsOf(exports.map((i) => i.target))})`
+    );
 
     await generateWasmJSModule(project, `src/${mod}`);
 

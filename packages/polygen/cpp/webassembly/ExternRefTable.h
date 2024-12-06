@@ -9,9 +9,9 @@ namespace facebook::react {
 class ExternRefTable: public Table {
 public:
   explicit ExternRefTable(wasm_rt_externref_table_t* table): table_(table) {}
-  explicit ExternRefTable(size_t initialSize, size_t maxSize) {
+  explicit ExternRefTable(size_t initialSize, std::optional<size_t> maxSize = std::nullopt): maxSize_(maxSize) {
     this->table_ = &this->ownedTable_;
-    wasm_rt_allocate_externref_table(this->table_, initialSize, maxSize);
+    wasm_rt_allocate_externref_table(this->table_, initialSize, maxSize.value_or(Table::DEFAULT_MAX_SIZE));
   }
   
   ~ExternRefTable() {
@@ -45,6 +45,7 @@ public:
   }
   
 protected:
+  std::optional<size_t> maxSize_;
   wasm_rt_externref_table_t ownedTable_;
   wasm_rt_externref_table_t* table_;
 };
