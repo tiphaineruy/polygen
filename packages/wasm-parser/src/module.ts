@@ -89,22 +89,12 @@ export class Module {
     this.addExports(getSection<ExportSection>('export')?.exports ?? []);
   }
 
-  public getFunction(index: number) {
-    const finalIndex = index - this.importsByType.function;
-    return this.functions[finalIndex];
-  }
-
   public addFunction(funcType: FunctionType) {
     this.functions.push(mapFunction(funcType));
   }
 
   public addFunctions(funcTypes: FunctionType[]) {
     this.functions = this.functions.concat(funcTypes.map(mapFunction));
-  }
-
-  public getGlobal(index: number) {
-    const finalIndex = index - this.importsByType.global;
-    return this.globals[finalIndex];
   }
 
   public addGlobal(global: GlobalType) {
@@ -115,22 +105,12 @@ export class Module {
     this.globals = this.globals.concat(globals.map(mapGlobal));
   }
 
-  public getTable(index: number) {
-    const finalIndex = index - this.importsByType.table;
-    return this.tables[finalIndex];
-  }
-
   public addTable(table: TableType) {
     this.tables.push(mapTable(table));
   }
 
   public addTables(tables: TableType[]) {
     this.tables = this.tables.concat(tables.map(mapTable));
-  }
-
-  public getMemory(index: number) {
-    const finalIndex = index - this.importsByType.memory;
-    return this.memories[finalIndex];
   }
 
   public addMemory(memory: MemoryType) {
@@ -178,7 +158,7 @@ export class Module {
   ): ModuleSymbol | undefined {
     switch (descriptor.type) {
       case 'function':
-        return this.getFunction(descriptor.index);
+        return this.functions[descriptor.index];
       case 'global':
         return mapGlobal(descriptor.global);
       case 'memory':
@@ -197,15 +177,16 @@ export class Module {
   resolveExportDescriptor(
     descriptor: ExportDescriptor
   ): ModuleSymbol | undefined {
+    console.log('resolve export descriptor', descriptor);
     switch (descriptor.type) {
       case 'function':
-        return this.getFunction(descriptor.index);
+        return this.functions[descriptor.index];
       case 'global':
-        return this.getGlobal(descriptor.index);
+        return this.globals[descriptor.index - this.importsByType.global];
       case 'memory':
-        return this.getMemory(descriptor.index);
+        return this.memories[descriptor.index - this.importsByType.memory];
       case 'table':
-        return this.getTable(descriptor.index);
+        return this.tables[descriptor.index - this.importsByType.table];
     }
   }
 }

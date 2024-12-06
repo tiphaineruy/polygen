@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <jsi/jsi.h>
 #include <ReactNativePolygen/wasm-rt.h>
 #include "Table.h"
@@ -9,9 +10,9 @@ namespace facebook::react {
 class FuncRefTable: public Table {
 public:
   explicit FuncRefTable(wasm_rt_funcref_table_t* table): table_(table) {}
-  explicit FuncRefTable(size_t initialSize, size_t maxSize) {
+  explicit FuncRefTable(size_t initialSize, std::optional<size_t> maxSize = std::nullopt): maxSize_(maxSize) {
     this->table_ = &this->ownedTable_;
-    wasm_rt_allocate_funcref_table(this->table_, initialSize, maxSize);
+    wasm_rt_allocate_funcref_table(this->table_, initialSize, maxSize.value_or(Table::DEFAULT_MAX_SIZE));
   }
   
   ~FuncRefTable() {
@@ -45,6 +46,7 @@ public:
   }
   
 protected:
+  std::optional<size_t> maxSize_;
   wasm_rt_funcref_table_t ownedTable_;
   wasm_rt_funcref_table_t* table_;
 };

@@ -11,6 +11,7 @@ public:
     Function,
     Memory,
     Global,
+    Table,
   };
   
   struct ExportInfo {

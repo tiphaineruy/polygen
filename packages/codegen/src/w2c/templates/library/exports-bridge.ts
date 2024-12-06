@@ -12,7 +12,7 @@ export function buildExportBridgeHeader(module: W2CModuleContext) {
 
     namespace facebook::react {
 
-    jsi::Object create${module.codegen.mangledName}Exports(jsi::Runtime &rt, jsi::Object&& importObject);
+    jsi::Object create${module.turboModule.generatedClassName}Exports(jsi::Runtime &rt, jsi::Object&& importObject);
 
     }
 `;
@@ -80,6 +80,7 @@ export function buildExportBridgeSource(
     #include <ReactNativePolygen/Memory.h>
     #include "jsi-exports-bridge.h"
     #include "wasm-rt.h"
+    #include "${module.name}.h"
 
     ${hackAutoNumberCoerce ? numberCoerceFunc : ''}
 

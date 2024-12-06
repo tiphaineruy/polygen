@@ -126,12 +126,16 @@ void ReactNativeWebAssembly::setGlobalValue(jsi::Runtime &rt, jsi::Object instan
 jsi::Object ReactNativeWebAssembly::createTable(jsi::Runtime &rt, jsi::Object tableDescriptor) {
   auto descriptor = NativeTableDescriptorBridging::fromJs(rt, tableDescriptor, this->jsInvoker_);
   std::shared_ptr<Table> table;
+  auto maxSizeNumber = descriptor.maxSize.has_value()
+    ? std::make_optional((double)descriptor.maxSize.value())
+    : std::nullopt;
+  
   switch (descriptor.element) {
     case NativeTableElementType::AnyFunc:
-      table = std::make_shared<FuncRefTable>(descriptor.initialSize, descriptor.maxSize);
+      table = std::make_shared<FuncRefTable>((size_t)descriptor.initialSize, descriptor.maxSize);
       break;
     case NativeTableElementType::ExternRef:
-      table = std::make_shared<ExternRefTable>(descriptor.initialSize, descriptor.maxSize);
+      table = std::make_shared<ExternRefTable>((size_t)descriptor.initialSize, descriptor.maxSize);
       break;
     default:
       assert(0);
