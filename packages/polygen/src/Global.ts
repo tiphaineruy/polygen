@@ -44,28 +44,25 @@ const TypeMapping: Record<WebAssemblyType, NativeType> = {
  * @spec https://webassembly.github.io/spec/js-api/index.html#globals
  */
 export class Global {
-  readonly #instance: OpaqueMemoryNativeHandle;
-
   constructor(
     instance: OpaqueMemoryNativeHandle | GlobalDescriptor,
     initialValue?: number
   ) {
     if (isGlobalDescriptor(instance)) {
-      this.#instance = NativeWASM.createGlobal(
+      NativeWASM.createGlobal(
+        this,
         TypeMapping[instance.type],
         instance.mutable ?? false,
         initialValue ?? 0
       );
-    } else {
-      this.#instance = instance;
     }
   }
 
   get value() {
-    return NativeWASM.getGlobalValue(this.#instance);
+    return NativeWASM.getGlobalValue(this);
   }
 
   set value(newValue: number) {
-    NativeWASM.setGlobalValue(this.#instance, newValue);
+    NativeWASM.setGlobalValue(this, newValue);
   }
 }

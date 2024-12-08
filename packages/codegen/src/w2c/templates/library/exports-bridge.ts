@@ -62,7 +62,7 @@ export function buildExportBridgeSource(
       /* exported memory: '${mem.name}' */
       {
         jsi::Object holder {rt};
-        auto memory = std::make_shared<Memory>(${mem.mangledAccessorFunction}(&inst->rootCtx));
+        auto memory = std::make_shared<Memory>(${mem.generatedFunctionName}(&inst->rootCtx));
         holder.setNativeState(rt, std::move(memory));
         memories.setProperty(rt, "${mem.name}", std::move(holder));
       }

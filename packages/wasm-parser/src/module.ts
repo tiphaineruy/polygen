@@ -177,7 +177,6 @@ export class Module {
   resolveExportDescriptor(
     descriptor: ExportDescriptor
   ): ModuleSymbol | undefined {
-    console.log('resolve export descriptor', descriptor);
     switch (descriptor.type) {
       case 'function':
         return this.functions[descriptor.index];

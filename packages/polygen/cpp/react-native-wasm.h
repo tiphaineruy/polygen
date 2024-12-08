@@ -30,17 +30,17 @@ public:
   void destroyModuleInstance(jsi::Runtime &rt, jsi::Object instance) override;
 
   // Memories
-  jsi::Object createMemory(jsi::Runtime &rt, double initial, std::optional<double> maximum) override;
+  void createMemory(jsi::Runtime &rt, jsi::Object holder, double initial, std::optional<double> maximum) override;
   jsi::Object getMemoryBuffer(jsi::Runtime &rt, jsi::Object instance) override;
   void growMemory(jsi::Runtime &rt, jsi::Object instance, double delta) override;
 
   // Globals
-  jsi::Object createGlobal(jsi::Runtime &rt, jsi::Value type, bool isMutable, double initialValue) override;
+  void createGlobal(jsi::Runtime &rt, jsi::Object holder, jsi::Value type, bool isMutable, double initialValue) override;
   double getGlobalValue(jsi::Runtime &rt, jsi::Object instance) override;
   void setGlobalValue(jsi::Runtime &rt, jsi::Object instance, double newValue) override;
-  
+
   // Tables
-  jsi::Object createTable(jsi::Runtime &rt, jsi::Object tableDescriptor) override;
+  void createTable(jsi::Runtime &rt, jsi::Object holder, jsi::Object tableDescriptor) override;
   void growTable(jsi::Runtime &rt, jsi::Object instance, double delta) override;
   jsi::Object getTableElement(jsi::Runtime &rt, jsi::Object instance, double index) override;
   void setTableElement(jsi::Runtime &rt, jsi::Object instance, double index, jsi::Object value) override;

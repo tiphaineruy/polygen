@@ -23,12 +23,12 @@ public:
     F32,
     F64,
   };
-  
+
   explicit Global(Type type, void* data, bool isMutable = false): type_(type), data_((Payload*)data), isMutable_(isMutable) {}
   explicit Global(Type type, jsi::Value value, bool isMutable = false): type_(type), isMutable_(isMutable), data_(&ownedData_) {
     setValueUnsafe(std::move(value));
   }
-  
+
   jsi::Value getValue() {
     switch (type_) {
       case Type::I32:
@@ -45,7 +45,11 @@ public:
         return { (double)data_->f64 };
     }
   }
-  
+
+  void* getUnsafePayloadPtr() const {
+    return this->data_;
+  }
+
   void setValueUnsafe(jsi::Value newValue) {
     switch (type_) {
       case Type::I32:
@@ -68,23 +72,23 @@ public:
         break;
     }
   }
-  
+
   void setValue(jsi::Runtime& rt, jsi::Value newValue) {
     if (!isMutable_) {
       throw new jsi::JSError(rt, "Cannot change immutable WebAssembly.Global value");
     }
-    
+
     setValueUnsafe(std::move(newValue));
   }
-  
+
   bool isMutable() const {
     return isMutable_;
   }
-  
+
   bool isOwned() const {
     return data_ == &ownedData_;
   }
-  
+
 private:
   bool isMutable_;
   Type type_;
