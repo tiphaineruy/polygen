@@ -5,9 +5,13 @@ import example from './table_test.wasm';
 
 register();
 
+const iterations = new WebAssembly.Global({ value: 'i32', mutable: true }, 0);
 const imports = {
   host: {
     add: (a: number, b: number) => a + b,
+  },
+  env: {
+    iterations,
   },
 };
 

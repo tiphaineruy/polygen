@@ -31,24 +31,17 @@ function isMemoryDescriptor(descriptor: any): descriptor is MemoryDescriptor {
  * @spec https://webassembly.github.io/spec/js-api/index.html#memories
  */
 export class Memory {
-  readonly #instance: OpaqueMemoryNativeHandle;
-
   constructor(instance: OpaqueMemoryNativeHandle | MemoryDescriptor) {
     if (isMemoryDescriptor(instance)) {
-      this.#instance = NativeWASM.createMemory(
-        instance.initial,
-        instance.maximum
-      );
-    } else {
-      this.#instance = instance;
+      NativeWASM.createMemory(this, instance.initial, instance.maximum);
     }
   }
 
   get buffer() {
-    return NativeWASM.getMemoryBuffer(this.#instance);
+    return NativeWASM.getMemoryBuffer(this);
   }
 
   public grow(delta: number) {
-    NativeWASM.growMemory(this.#instance, delta);
+    NativeWASM.growMemory(this, delta);
   }
 }

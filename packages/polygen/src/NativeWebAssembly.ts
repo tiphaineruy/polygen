@@ -136,21 +136,29 @@ export interface Spec extends TurboModule {
   destroyModuleInstance(instance: OpaqueModuleInstanceNativeHandle): void;
 
   // Memory
-  createMemory(initial: number, maximum?: number): OpaqueMemoryNativeHandle;
+  createMemory(
+    holder: OpaqueMemoryNativeHandle,
+    initial: number,
+    maximum?: number
+  ): void;
   getMemoryBuffer(instance: OpaqueMemoryNativeHandle): UnsafeArrayBuffer;
   growMemory(instance: OpaqueMemoryNativeHandle, delta: number): void;
 
   // Globals
   createGlobal(
+    holder: OpaqueGlobalNativeHandle,
     type: NativeType,
     isMutable: boolean,
     initialValue: number
-  ): OpaqueGlobalNativeHandle;
+  ): void;
   getGlobalValue(instance: OpaqueGlobalNativeHandle): number;
   setGlobalValue(instance: OpaqueGlobalNativeHandle, newValue: number): void;
 
   // Tables
-  createTable(descriptor: NativeTableDescriptor): OpaqueTableNativeHandle;
+  createTable(
+    holder: OpaqueTableNativeHandle,
+    descriptor: NativeTableDescriptor
+  ): void;
   growTable(instance: OpaqueTableNativeHandle, delta: number): void;
   getTableElement(instance: OpaqueTableNativeHandle, index: number): unknown;
   setTableElement(

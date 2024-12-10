@@ -7,7 +7,6 @@ import type {
 import type { W2CCodegenImportedModule } from './codegen-context.js';
 
 export interface GeneratedFunctionInfo {
-  generatedFunctionName: string;
   parameterTypeNames: string[];
   returnTypeName: string;
 }
@@ -15,6 +14,7 @@ export interface GeneratedFunctionInfo {
 export interface GeneratedImport<T = ModuleSymbol> extends ModuleImport<T> {
   mangledName: string;
   moduleInfo: W2CCodegenImportedModule;
+  generatedFunctionName: string;
 }
 
 export type GeneratedFunctionImport = GeneratedImport<ModuleFunction> &
@@ -22,7 +22,7 @@ export type GeneratedFunctionImport = GeneratedImport<ModuleFunction> &
 
 export interface GeneratedExport<T = ModuleSymbol> extends ModuleExport<T> {
   mangledName: string;
-  mangledAccessorFunction: string;
+  generatedFunctionName: string;
 }
 
 export type GeneratedFunctionExport = GeneratedExport<ModuleFunction> &

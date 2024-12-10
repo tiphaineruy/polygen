@@ -2,6 +2,7 @@ import { HEADER } from '../common.js';
 import { W2CModuleContext } from '../../context.js';
 import type { GeneratedFunctionImport, GeneratedImport } from '../../types.js';
 import stripIndent from 'strip-indent';
+import type { ModuleGlobal } from '@callstack/wasm-parser';
 
 export function buildImportBridgeHeader(module: W2CModuleContext) {
   const imports = module.codegen.importedModules;
@@ -51,7 +52,6 @@ export function buildImportBridgeSource(module: W2CModuleContext) {
     const returnKeyword = func.target.resultTypes.length > 0 ? 'return ' : '';
     const castSuffix = func.target.resultTypes.length > 0 ? '.asNumber()' : '';
 
-    // TODO: get import info for this func as ctx 1st params
     return `
       /* import: '${func.module}' '${func.name}' */
       ${func.returnTypeName} ${func.generatedFunctionName}(${func.moduleInfo.generatedContextTypeName}* ctx${declarationParams}) {
@@ -61,10 +61,25 @@ export function buildImportBridgeSource(module: W2CModuleContext) {
     `;
   }
 
+  function makeImportGlobal(global: GeneratedImport<ModuleGlobal>): string {
+    const cType = global.target.type.replace('i', 'u') + '*';
+
+    return `
+      /* import: '${global.module}' '${global.name}' */
+      ${cType} ${global.generatedFunctionName}(${global.moduleInfo.generatedContextTypeName}* ctx) {
+        auto obj = ctx->importObj.getPropertyAsObject(ctx->rt, "${global.name}");
+        auto global = NativeStateHelper::tryGet<Global>(ctx->rt, obj);
+        return (${cType})global->getUnsafePayloadPtr();
+      }
+    `;
+  }
+
   function makeImport(imp: GeneratedImport): string {
     switch (imp.target.kind) {
       case 'function':
         return makeImportFunc(imp as GeneratedFunctionImport);
+      case 'global':
+        return makeImportGlobal(imp as GeneratedImport<ModuleGlobal>);
       default:
         console.warn('Unknown import type', imp.target.kind);
         return '';
@@ -75,8 +90,11 @@ export function buildImportBridgeSource(module: W2CModuleContext) {
     HEADER +
     stripIndent(`
     #include "jsi-imports-bridge.h"
+    #include <ReactNativePolygen/WebAssembly.h>
+    #include <ReactNativePolygen/NativeStateHelper.h>
 
     using namespace facebook;
+    using namespace facebook::react;
 
     #ifdef __cplusplus
     extern "C" {

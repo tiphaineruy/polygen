@@ -78,11 +78,10 @@ void ReactNativeWebAssembly::destroyModuleInstance(jsi::Runtime &rt, jsi::Object
 
 
 // Memories
-jsi::Object ReactNativeWebAssembly::createMemory(jsi::Runtime &rt, double initial, std::optional<double> maximum) {
+void ReactNativeWebAssembly::createMemory(jsi::Runtime &rt, jsi::Object holder, double initial, std::optional<double> maximum) {
   auto maxPages = (uint64_t)maximum.value_or(100);
   auto memory = std::make_shared<Memory>((uint64_t)initial, maxPages, false);
-
-  return NativeStateHelper::wrap(rt, memory);
+  NativeStateHelper::attach(rt, holder, memory);
 }
 
 jsi::Object ReactNativeWebAssembly::getMemoryBuffer(jsi::Runtime &rt, jsi::Object instance) {
@@ -99,31 +98,29 @@ void ReactNativeWebAssembly::growMemory(jsi::Runtime &rt, jsi::Object instance, 
 
 
 // Globals
-jsi::Object ReactNativeWebAssembly::createGlobal(jsi::Runtime &rt, jsi::Value rawType, bool isMutable, double initialValue) {
+void ReactNativeWebAssembly::createGlobal(jsi::Runtime &rt, jsi::Object holder, jsi::Value rawType, bool isMutable, double initialValue) {
   auto type = Bridging<NativeWebAssemblyNativeType>::fromJs(rt, rawType);
   auto waType = static_cast<Global::Type>((uint32_t)type);
   jsi::Value initial { initialValue };
+  
   auto globalVar = std::make_shared<Global>(waType, std::move(initial), isMutable);
-
-  return NativeStateHelper::wrap(rt, globalVar);
+  NativeStateHelper::attach(rt, holder, globalVar);
 
 }
 
 double ReactNativeWebAssembly::getGlobalValue(jsi::Runtime &rt, jsi::Object instance) {
   auto globalVar = NativeStateHelper::tryGet<Global>(rt, instance);
-
   return globalVar->getValue().asNumber();
 }
 
 void ReactNativeWebAssembly::setGlobalValue(jsi::Runtime &rt, jsi::Object instance, double newValue) {
   auto globalVar = NativeStateHelper::tryGet<Global>(rt, instance);
-
   globalVar->setValue(rt, {newValue});
 }
 
 
 // Tables
-jsi::Object ReactNativeWebAssembly::createTable(jsi::Runtime &rt, jsi::Object tableDescriptor) {
+void ReactNativeWebAssembly::createTable(jsi::Runtime &rt, jsi::Object holder, jsi::Object tableDescriptor) {
   auto descriptor = NativeTableDescriptorBridging::fromJs(rt, tableDescriptor, this->jsInvoker_);
   std::shared_ptr<Table> table;
   auto maxSizeNumber = descriptor.maxSize.has_value()
@@ -141,7 +138,7 @@ jsi::Object ReactNativeWebAssembly::createTable(jsi::Runtime &rt, jsi::Object ta
       assert(0);
   }
   
-  return NativeStateHelper::wrap(rt, table);
+  NativeStateHelper::attach(rt, holder, table);
 }
 
 void ReactNativeWebAssembly::growTable(jsi::Runtime &rt, jsi::Object instance, double delta) {

@@ -131,23 +131,26 @@ function processImports(context: W2CModuleCodegenContext, module: Module) {
       );
     }
 
+    const generatedFunctionName = mangleFunction(
+      el.name,
+      importInfo.mangledName
+    );
+
     switch (el.target.kind) {
       case 'function':
         return {
           ...el,
-          ...buildGeneratedFunctionInfo(
-            el.target,
-            el.name,
-            importInfo.mangledName
-          ),
+          ...buildGeneratedFunctionInfo(el.target),
           mangledName: mangleName(el.name),
           moduleInfo: importInfo,
+          generatedFunctionName,
         };
       default:
         return {
           ...el,
           mangledName: mangleName(el.name),
           moduleInfo: importInfo,
+          generatedFunctionName,
         };
     }
   });
@@ -155,23 +158,22 @@ function processImports(context: W2CModuleCodegenContext, module: Module) {
 
 function processExports(context: W2CModuleCodegenContext, module: Module) {
   return module.exports.map((el): GeneratedExport => {
+    const mangledName = mangleName(el.name);
+    const generatedFunctionName = mangleFunction(el.name, context.mangledName);
+
     switch (el.target.kind) {
       case 'function':
         return {
           ...el,
-          ...buildGeneratedFunctionInfo(
-            el.target,
-            el.name,
-            context.mangledName
-          ),
-          mangledName: mangleName(el.name),
-          mangledAccessorFunction: '',
+          ...buildGeneratedFunctionInfo(el.target),
+          generatedFunctionName,
+          mangledName,
         };
       default:
         return {
           ...el,
-          mangledName: mangleName(el.name),
-          mangledAccessorFunction: mangleFunction(el.name, context.mangledName),
+          mangledName,
+          generatedFunctionName,
         };
     }
   });
@@ -182,14 +184,11 @@ function mangleFunction(name: string, mangledModule: string) {
 }
 
 function buildGeneratedFunctionInfo(
-  func: ModuleFunction,
-  name: string,
-  moduleName: string
+  func: ModuleFunction
 ): GeneratedFunctionInfo {
   const returnType = matchW2CRType(func.resultTypes[0]);
 
   return {
-    generatedFunctionName: mangleFunction(name, moduleName),
     parameterTypeNames: func.parametersTypes.map(matchW2CRType),
     returnTypeName: returnType,
   };
