@@ -1,14 +1,14 @@
 {
-  "name": "react-native-wasm-example",
+  "name": "polygen-example",
   "description": "Example app for React Native",
   "license": "MIT",
-  "homepage": "https://github.com/callstack/react-native-wasm",
+  "homepage": "https://github.com/callstack/polygen",
   "version": "0.0.1",
   "author": "Robert Pasiński <robert.pasinski@callstack.com>",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/callstack/react-native-wasm.git"
+    "url": "https://github.com/callstack/polygen.git"
   },
   "scripts": {
     "dev": "true",

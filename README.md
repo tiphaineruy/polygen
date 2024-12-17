@@ -73,7 +73,52 @@ polygen init
 polygen update
 ```
 
-Run `polygen update` after any of the webassembly module changed.
+Run `polygen update` after any of the WebAssembly module changed.
+
+To use WebAssembly API, import `@callstack/polygen/polyfill` in your application (before any other imports):
+
+```js
+import '@callstack/polygen/polyfill';
+```
+
+### Metro
+
+Polygen has a Metro plugin that allows you to import WebAssembly modules in your application.
+
+> [!WARNING]
+> Currently, only modules from the current package are supported. This will be implemented in the next version.
+
+Add `@callstack/polygen-metro-config` dependency to your project:
+
+```sh
+yarn add -D @callstack/polygen-metro-config
+```
+
+Then, in your `metro.config.js` file, add the following:
+
+```js
+const { withPolygenConfig } = require('@callstack/polygen-metro-config');
+```
+
+And wrap your Metro configuration with `withPolygenConfig` call:
+
+```js
+const config = {
+  // ...
+};
+
+module.exports = withPolygenConfig(
+  mergeConfig(getDefaultConfig(__dirname), config)
+);
+```
+
+Then, you should be able to import module buffers in your application:
+
+```js
+import example from '../table_test.wasm';
+
+const instance = new WebAssembly.Instance(new WebAssembly.Module(example));
+```
 
 ## Examples
 
