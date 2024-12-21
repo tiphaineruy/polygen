@@ -1,12 +1,12 @@
 {
-  "name": "WasmExample",
-  "displayName": "WasmExample",
-  "singleApp": "wasm-example",
+  "name": "ReactNativePolygen",
+  "displayName": "ReactNativePolygen",
+  "singleApp": "polygen-example",
   "components": [
     {
-      "appKey": "WasmExample",
-      "displayName": "WasmExample",
-      "slug": "wasm-example"
+      "appKey": "ReactNativePolygen",
+      "displayName": "ReactNativePolygen",
+      "slug": "polygen-example"
     }
   ],
   "resources": {
@@ -17,10 +17,10 @@
     "windows": ["dist/assets", "dist/main.windows.bundle"]
   },
   "android": {
-    "package": "com.callstack.wasm.example"
+    "package": "com.callstack.polygen.example"
   },
   "ios": {
-    "bundleIdentifier": "com.callstack.wasm.example",
+    "bundleIdentifier": "com.callstack.polygen.example",
     "codeSignEntitlements": {
       "com.apple.developer.game-center": true
     }

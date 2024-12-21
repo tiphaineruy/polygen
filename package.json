@@ -13,10 +13,11 @@
     "lint:fix": "biome check . --fix",
     "clean": "turbo run clean && rm -rf node_modules",
     "build": "turbo run build",
+    "build:ios": "turbo run build:ios",
     "lint:root": "eslint \"packages/*/**/*.{js,jsx,ts,tsx}\" \"apps/*/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix:root": "eslint \"packages/*/**/*.{js,jsx,ts,tsx}\" \"apps/*/**/*.{js,jsx,ts,tsx}\" --fix",
-    "test": "turbo run test test:root",
-    "test:root": "vitest"
+    "test": "vitest run",
+    "test:dev": "vitest dev"
   },
   "keywords": [
     "react-native",
