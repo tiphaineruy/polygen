@@ -1614,6 +1614,7 @@ __metadata:
     release-it: "npm:^15.0.0"
     turbo: "npm:^2.3.3"
     typescript: "npm:^5.2.2"
+    vitest: "npm:^2.1.8"
   languageName: unknown
   linkType: soft
 
