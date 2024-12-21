@@ -114,6 +114,7 @@
     ]
   },
   "overrides": [
+    { "include": ["package.json"], "formatter": { "lineWidth": 1 } },
     { "include": ["*.js"], "linter": { "rules": {} } },
     { "include": ["*.jsx"] },
     {
