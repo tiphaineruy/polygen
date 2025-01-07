@@ -1,0 +1,33 @@
+name: Setup WebAssembly Toolkit
+description: Runs the setup for the WebAssembly Toolkit
+
+runs:
+  using: composite
+  steps:
+    - name: Cache binary
+      id: cache-binary
+      uses: actions/cache@v4
+      with:
+        path: /tmp/wabt
+        key: ${{ runner.os }}-wabt
+
+    - name: Install dependencies
+      if: steps.yarn-cache.outputs.cache-hit != 'true'
+      run: yarn install --immutable
+      shell: bash
+
+    - name: Build WABT
+      if: steps.cache-binary.outputs.cache-hit != 'true'
+      run: |
+        cd /tmp
+        git clone --recursive https://github.com/WebAssembly/wabt
+        cd wabt
+        git submodule update --init
+        cmake -B build -S .
+        cmake --build build
+      shell: bash
+
+    - name: Install WABT on the system
+      run: |
+        export PATH="$PATH:/tmp/wabt/build"
+      shell: bash
