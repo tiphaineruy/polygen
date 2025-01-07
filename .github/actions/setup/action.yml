@@ -29,7 +29,8 @@ runs:
     - name: Install WABT
       run: |
         git clone --recursive https://github.com/WebAssembly/wabt
-        cd wabt
+        mv wabt .wabt
+        cd .wabt
         git submodule update --init
         cmake -B build -S .
         cmake --build build
