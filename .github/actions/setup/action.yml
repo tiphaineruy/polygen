@@ -25,3 +25,13 @@ runs:
       if: steps.yarn-cache.outputs.cache-hit != 'true'
       run: yarn install --immutable
       shell: bash
+
+    - name: Install WABT
+      run: |
+        git clone --recursive https://github.com/WebAssembly/wabt
+        cd wabt
+        git submodule update --init
+        cmake -B build -S .
+        cmake --build build
+        export PATH="$PATH:$(pwd)/build"
+      shell: bash
