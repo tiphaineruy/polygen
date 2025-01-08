@@ -120,6 +120,9 @@ jobs:
       - name: Setup WABT
         uses: ./.github/actions/setup-wabt
 
+      - name: Build package
+        run: yarn build
+
       - name: Cache turborepo for iOS
         uses: actions/cache@v3
         with:
