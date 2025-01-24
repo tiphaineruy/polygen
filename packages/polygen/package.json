@@ -1,6 +1,6 @@
 {
   "name": "@callstack/polygen",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "React Native Module for running WebAssembly modules, with native performance.",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
