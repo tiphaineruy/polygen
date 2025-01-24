@@ -10,6 +10,7 @@
       "**/dist",
       "**/lib",
       "**/.turbo",
+      ".changeset/config.json",
       ".yarn"
     ]
   },
