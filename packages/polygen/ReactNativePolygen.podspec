@@ -39,5 +39,5 @@ Pod::Spec.new do |s|
     end
   end
 
-  s.prepare_command = "sh scripts/regenerate.sh"
+#   s.prepare_command = "sh scripts/regenerate.sh"
 end
