@@ -67,9 +67,9 @@
   "author": "Callstack (https://github.com/callstack)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/callstack/react-native-wasm/issues"
+    "url": "https://github.com/callstackincubator/polygen/issues"
   },
-  "homepage": "https://github.com/callstack/polygen",
+  "homepage": "https://github.com/callstackincubator/polygen",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
