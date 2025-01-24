@@ -14,10 +14,9 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "build": "turbo run build",
     "build:ios": "turbo run build:ios",
-    "lint:root": "eslint \"packages/*/**/*.{js,jsx,ts,tsx}\" \"apps/*/**/*.{js,jsx,ts,tsx}\"",
-    "lint-fix:root": "eslint \"packages/*/**/*.{js,jsx,ts,tsx}\" \"apps/*/**/*.{js,jsx,ts,tsx}\" --fix",
     "test": "vitest run",
-    "test:dev": "vitest dev"
+    "test:dev": "vitest dev",
+    "publish-packages": "turbo run build && biome check . && changeset version && changeset publish"
   },
   "keywords": [
     "react-native",
@@ -42,5 +41,8 @@
     "apps/*",
     "packages/*"
   ],
-  "packageManager": "yarn@4.5.3"
+  "packageManager": "yarn@4.5.3",
+  "dependencies": {
+    "@changesets/cli": "^2.27.12"
+  }
 }
