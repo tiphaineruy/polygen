@@ -83,7 +83,7 @@ In your application folder run:
 
 ```sh
 polygen init
-polygen update
+polygen generate
 ```
 
 Run `polygen update` after any of the WebAssembly module changed.
@@ -132,6 +132,26 @@ import example from '../table_test.wasm';
 
 const instance = new WebAssembly.Instance(new WebAssembly.Module(example));
 ```
+
+### Using Fetch
+
+You can also pass WebAssembly module binary loaded using `fetch`, or any other method:
+
+```js
+await WebAssembly.compileStreaming(
+  fetch('http://localhost:8000/example.wasm')
+)
+```
+
+The downloaded module is not actually executed, but a native counterpart is searched based on the module checksum.
+
+This does not require any additional setup, but it has the overhead of fetching the module on runtime, just for it to
+be discarded.
+
+For it to work, you need:
+
+ - Place exactly the same WebAssembly Module in `src` directory of your application.
+ - The module binary checksums must match
 
 ## Examples
 
