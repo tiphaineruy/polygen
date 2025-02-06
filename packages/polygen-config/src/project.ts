@@ -90,7 +90,7 @@ export class Project {
     }
 
     try {
-      const config = configPath ? require(configPath) : {};
+      const config = configPath ? require(configPath).default : {};
       return new Project(projectRoot, configPath, config);
     } catch (e) {
       throw new InvalidProjectConfigurationError(
