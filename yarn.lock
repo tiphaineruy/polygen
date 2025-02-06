@@ -1656,7 +1656,7 @@ __metadata:
     react: "*"
     react-native: "*"
   bin:
-    polygen: cli.js
+    polygen: cli.mjs
   languageName: unknown
   linkType: soft
 
