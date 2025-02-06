@@ -5,20 +5,79 @@ import {
   findProjectRoot,
 } from '@callstack/polygen-config/project';
 import chalk from 'chalk';
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import consola from 'consola';
-import { addDependency, detectPackageManager, installDependencies } from 'nypm';
+import {
+  PackageManager,
+  addDependency,
+  detectPackageManager,
+  installDependencies,
+} from 'nypm';
 import { oraPromise } from 'ora';
 import pkg from '../../package.json' with { type: 'json' };
 import defaultConfig from '../templates/default-polygen-config.js';
 
-const command = new Command('init').description(
-  'Initializes React Native WebAssembly in current directory'
-);
+const command = new Command('init')
+  .description('Initializes React Native WebAssembly in current directory')
+  .addOption(new Option('-v, --verbose', 'Enable verbose output'));
 
-interface Options {}
+interface Options {
+  verbose: boolean;
+}
 
-const CONFIG_NAME = 'poylgen.config.mjs';
+const CONFIG_NAME = 'polygen.config.mjs';
+
+/**
+ * Subroutine for asking user whenever to add polygen dependency and its logic.
+ *
+ * @return Whenever dependencies changes (and `install` is required)
+ */
+async function maybeAddDeps(
+  projectRoot: string,
+  pm: PackageManager,
+  options: Options
+): Promise<boolean> {
+  const { verbose } = options;
+  const pkgJsonPath = path.join(projectRoot, 'package.json');
+  const pkgJsonText = await fs.readFile(pkgJsonPath, 'utf8');
+  const pkgJson = JSON.parse(pkgJsonText);
+
+  const { dependencies } = pkgJson;
+  if ('@callstack/polygen' in dependencies) {
+    consola.debug(
+      "@callstack/polygen is already in project's dependencies, skipping..."
+    );
+    return false;
+  }
+
+  const shouldAdd = await consola.prompt(
+    `Do you want to add Polygen to this project?`,
+    {
+      type: 'confirm',
+      cancel: 'null',
+    }
+  );
+
+  if (shouldAdd === null) {
+    consola.info('Aborted');
+    process.exit(1);
+  }
+
+  if (shouldAdd) {
+    await oraPromise(
+      () => addDependency('@callstack/polygen', { silent: !verbose }),
+      'Adding Polygen'
+    );
+  } else {
+    const addCommand = pm.name === 'yarn' ? 'add' : 'install';
+    const command = `${pm.name} ${addCommand} @callstack/polygen`;
+    consola.info(
+      `You can install Polygen later by running: ${chalk.bold(command)}`
+    );
+  }
+
+  return shouldAdd;
+}
 
 command.action(async (options: Options) => {
   consola.info(`Using ${chalk.bold.magenta(`Polygen ${pkg.version}`)}`);
@@ -43,35 +102,13 @@ command.action(async (options: Options) => {
     consola.error('Could not detect package manager');
     return;
   }
+  consola.debug(`Detected package manager: ${pm.name} ${pm.version}`);
 
   // TODO: add to git directory
 
-  const shouldInstall = await consola.prompt(
-    `Do you want to install polygen in this project (using ${pm.name})?`,
-    {
-      type: 'confirm',
-      cancel: 'null',
-    }
-  );
-
-  if (shouldInstall === null) {
-    consola.info('Aborted');
-    return;
-  }
-
-  if (!shouldInstall) {
-    const addCommand = pm.name === 'yarn' ? 'add' : 'install';
-    const command = `${pm.name} ${addCommand} @callstack/polygen`;
-    consola.info(
-      `You can install polygen later by running: ${chalk.bold(command)}`
-    );
-  } else {
-    await oraPromise(async () => {
-      await addDependency(['@callstack/polygen', '@callstack/polygen-config'], {
-        silent: true,
-      });
-      await installDependencies({ silent: true });
-    }, 'Installing Polygen');
+  let requiresInstall = await maybeAddDeps(projectRoot, pm, options);
+  if (requiresInstall) {
+    await installDependencies({ silent: !options.verbose });
   }
 
   const steps = [
