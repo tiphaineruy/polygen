@@ -73,8 +73,12 @@ Then, you need to make binaries visible to polygen tool. You can do this in two 
 
 ## Installation
 
+In your React Native project run:
+
 ```sh
-npm i -g @callstack/polygen
+npx @callstack/polygen init
+# or
+yarn dlx @callstack/polygen init
 ```
 
 ## Usage
@@ -82,11 +86,19 @@ npm i -g @callstack/polygen
 In your application folder run:
 
 ```sh
-polygen init
-polygen generate
+## npm
+npx polygen scan
+# apply changes in config
+npx polygen generate
+
+## yarn
+yarn polygen scan
+# apply changes in config
+yarn polygen generate
 ```
 
-Run `polygen update` after any of the WebAssembly module changed.
+Run `polygen scan` to search for changes in found WebModules. All modules must be explictly listed in `polygen.config.[mc]js`
+Run `polygen generate` after any of the WebAssembly module changed.
 
 To use WebAssembly API, import `@callstack/polygen/polyfill` in your application (before any other imports):
 
