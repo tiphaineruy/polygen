@@ -1559,8 +1559,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@callstack/polygen-cli@workspace:packages/polygen-cli"
   dependencies:
-    "@callstack/polygen-codegen": "workspace:0.1.0"
-    "@callstack/polygen-config": "workspace:0.1.0"
+    "@callstack/polygen-codegen": "npm:0.1.0"
+    "@callstack/polygen-config": "npm:0.1.0"
     "@callstack/polygen-typescript-config": "workspace:^"
     chalk: "npm:^5.3.0"
     commander: "npm:^12.1.0"
@@ -1575,7 +1575,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@callstack/polygen-codegen@npm:0.1.0, @callstack/polygen-codegen@workspace:0.1.0, @callstack/polygen-codegen@workspace:packages/codegen":
+"@callstack/polygen-codegen@npm:0.1.0, @callstack/polygen-codegen@workspace:packages/codegen":
   version: 0.0.0-use.local
   resolution: "@callstack/polygen-codegen@workspace:packages/codegen"
   dependencies:
@@ -1590,7 +1590,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@callstack/polygen-config@npm:0.1.0, @callstack/polygen-config@workspace:0.1.0, @callstack/polygen-config@workspace:^, @callstack/polygen-config@workspace:packages/polygen-config":
+"@callstack/polygen-config@npm:0.1.0, @callstack/polygen-config@workspace:^, @callstack/polygen-config@workspace:packages/polygen-config":
   version: 0.0.0-use.local
   resolution: "@callstack/polygen-config@workspace:packages/polygen-config"
   dependencies:
