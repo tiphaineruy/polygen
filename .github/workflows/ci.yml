@@ -153,7 +153,7 @@ jobs:
       - name: Run polygen
         run: |
           cd apps/example
-          yarn run polygen
+          yarn polygen generate
 
       - name: Install cocoapods
 #        if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
