@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.0.5/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "callstackincubator/polygen" }],
+  "changelog": "./custom-changelog-format.mjs",
   "commit": false,
   "fixed": [],
   "linked": [["@callstack/polygen-*"]],
