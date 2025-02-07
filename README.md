@@ -1,11 +1,51 @@
-<div style="text-align: center;">
-  <img src="docs/polygen-logo.png" width="150" alt="" />
-  <h1 style="margin-top: 0; padding-top: 0">Polygen</h1>
-  <strong>WebAssembly Toolkit for React Native</strong>
-  <hr/>
-</div>
+<a id="readme-top"></a>
 
-Polygen is a library for React Native that allows you to run WebAssembly modules in your apps, statically, without interpreting.
+<!-- PROJECT LOGO -->
+<p align="center">
+  <img src="docs/polygen-logo.png" width="150" alt="" />
+</p>
+<h1 align="center">Polygen: WebAssembly Toolkit for React Native</h1>
+
+<!-- SHIELDS -->
+<p align="center">
+<a href="https://github.com/callstackincubator/polygen/actions/workflows/ci.yml">
+  <img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/callstackincubator/polygen/ci.yml?style=flat-square" />
+</a>
+
+<a href="https://www.npmjs.com/package/@callstack/polygen">
+  <img alt="Version" src="https://img.shields.io/npm/v/@callstack/polygen?style=flat-square" />
+</a>
+
+<a href="https://github.com/callstackincubator/polygen/blob/master/LICENSE">
+  <img alt="License" src="https://img.shields.io/github/license/callstackincubator/polygen?color=green&style=flat-square" />
+</a>
+
+<a href="https://github.com/callstackincubator/polygen/issues">
+  <img alt="Issues" src="https://img.shields.io/github/issues/callstackincubator/polygen?color=green&style=flat-square" />
+</a>
+
+<a href="https://discord.gg/Q4yr2rTWYF">
+  <img alt="Discord" src="https://img.shields.io/discord/426714625279524876.svg?style=flat-square&colorB=758ED3" />
+</a>
+
+<a href="https://callstack.com/open-source/">
+  <img alt="Callstack Open Source" src="https://callstack.com/images/callstack-badge.svg" />
+</a>
+</p>
+
+<p align="center">
+  Polygen allows you to run WebAssembly Modules in your React Native apps, with near native speed.
+
+  <br />
+  <!--
+  <a href="https://github.com/callstackincubator/polygen"><strong>Explore the docs »</strong></a>
+  <br />
+  <br />
+  -->
+  <a href="https://github.com/callstackincubator/polygen/issues/new?template=bug_report.yml">Report a Bug</a>
+  &middot;
+  <a href="https://github.com/callstackincubator/polygen/discussions/new?category=ideas">Request Feature</a>
+</p>
 
 ## Getting started
 
