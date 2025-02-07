@@ -1,4 +1,9 @@
-# Polygen
+<div style="text-align: center;">
+  <img src="docs/polygen-logo.png" width="150" alt="" />
+  <h1 style="margin-top: 0; padding-top: 0">Polygen</h1>
+  <strong>WebAssembly Toolkit for React Native</strong>
+  <hr/>
+</div>
 
 Polygen is a library for React Native that allows you to run WebAssembly modules in your apps, statically, without interpreting.
 
@@ -44,8 +49,18 @@ This gives us the ability to run WebAssembly modules in a statically compiled wa
 Because Polygen Codegen depends on [`wasm2c`](https://github.com/WebAssembly/wabt) tool, you need to have it installed on your machine.
 You can install it by either:
 
-1. Downloading precompiled binaries from the [releases page](https://github.com/WebAssembly/wabt/releases) of wabt project.
-2. Building it from the source:
+1. Install using package manager:
+
+   ```sh
+   # macOS
+   brew install wabt
+
+   # linux
+   sudo apt install wabt
+   ```
+
+2. Downloading precompiled binaries from the [releases page](https://github.com/WebAssembly/wabt/releases) of wabt project.
+3. Building it from the source:
 
    ```sh
    $ git clone --recursive https://github.com/WebAssembly/wabt
