@@ -1,5 +1,4 @@
 import Link from 'fumadocs-core/link';
-import router from 'next/router';
 import { HTMLAttributes } from 'react';
 import { twMerge as cn } from 'tailwind-merge';
 
@@ -36,7 +35,7 @@ export function PrettyCard(props: PrettyCardProps) {
       ) : null}
       {image ? (
         <img
-          src={`${router.basePath ?? ''}/${image}`}
+          src={`${process.env.DOCS_BASE_PATH ?? ''}/${image}`}
           alt="image"
           width={36}
           className={cn('not-prose my-2')}
