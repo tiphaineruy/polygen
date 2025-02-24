@@ -20,7 +20,11 @@ jobs:
           fetch-depth: 0
 
       - name: Download deps
-        run: yarn
+        run: yarn install
+
+      - name: Download deps
+        working-directory: ./docs
+        run: yarn install
 
       - name: Build docs
         working-directory: ./docs
