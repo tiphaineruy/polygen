@@ -19,7 +19,10 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/polygen-logo.png" />
+        <link
+          rel="icon"
+          href={`${process.env.DOCS_BASE_PATH ?? ''}/polygen-logo.png`}
+        />
       </head>
       <body
         style={{

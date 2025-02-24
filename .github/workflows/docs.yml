@@ -30,7 +30,7 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             docs/.next/cache
-          key: ${{ runner.os }}-docs-${{ hashFiles('docs/yarn.lock') }}-${{ hashFiles('docs/**/*.js', 'docs/**/*.jsx', 'docs/**/*.ts', 'docs/**/*.tsx', 'docs/**/*.jsm') }}
+          key: ${{ runner.os }}-docs-${{ hashFiles('docs/yarn.lock') }}-${{ hashFiles('docs/**/*.js', 'docs/**/*.jsx', 'docs/**/*.ts', 'docs/**/*.tsx', 'docs/**/*.jsm', 'docs/**/*.mdx?', 'docs/**/*.json') }}
           restore-keys: |
             ${{ runner.os }}-docs-${{ hashFiles('docs/yarn.lock') }}
 
