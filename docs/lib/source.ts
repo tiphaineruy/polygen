@@ -14,7 +14,11 @@ export const source = loader({
     if (icon in icons) {
       return createElement(icons[icon as keyof typeof icons]);
     } else {
-      return createElement('img', { src: `/${icon}`, alt: '', width: 15 });
+      return createElement('img', {
+        src: `${process.env.DOCS_BASE_PATH ?? ''}/${icon}`,
+        alt: '',
+        width: 15,
+      });
     }
   },
 });

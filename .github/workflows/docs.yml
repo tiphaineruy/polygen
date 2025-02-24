@@ -20,20 +20,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            docs/.next/cache
+          key: ${{ runner.os }}-docs-${{ hashFiles('docs/yarn.lock') }}-${{ hashFiles('docs/**/*.js', 'docs/**/*.jsx', 'docs/**/*.ts', 'docs/**/*.tsx', 'docs/**/*.jsm', 'docs/**/*.mdx?', 'docs/**/*.json') }}
+          restore-keys: |
+            ${{ runner.os }}-docs-${{ hashFiles('docs/yarn.lock') }}
+
       - name: Download deps
         working-directory: ./docs
-        run: yarn install
+        run: yarn install --immutable
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
 
       - name: Build docs
         working-directory: ./docs
-        run: yarn build
+        run: DOCS_BASE_PATH=/polygen yarn build
 
       - name: Upload docs as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./docs/out/
-
 
   deploy:
     name: Deploy to GitHub Pages

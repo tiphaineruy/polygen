@@ -7,7 +7,7 @@ const config = {
   reactStrictMode: true,
   transpilePackages: ['next-mdx-remote'],
   output: 'export',
-  basePath: '/polygen',
+  basePath: process.env.DOCS_BASE_PATH ?? '',
 };
 
 export default withMDX(config);
