@@ -11,7 +11,11 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <>
-        <img src="/polygen-logo.png" alt="Polygen logo" width={32} />
+        <img
+          src={`${process.env.DOCS_BASE_PATH ?? ''}/polygen-logo.png`}
+          alt="Polygen logo"
+          width={32}
+        />
         Polygen
       </>
     ),
