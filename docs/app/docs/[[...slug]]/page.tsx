@@ -38,7 +38,7 @@ export default async function Page(props: {
       lastUpdate={page.data.lastModified}
       tableOfContent={{
         style: 'clerk',
-        single: false,
+        single: true,
       }}
       editOnGithub={{
         repo: 'polygen',
