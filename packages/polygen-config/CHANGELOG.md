@@ -1,5 +1,12 @@
 # @callstack/polygen-config
 
+## 0.2.1
+
+### Patch Changes
+
+- Added support for multiple output files [65d6607]
+- Added support for overriding wasm2c module name [65d6607]
+
 ## 0.2.0
 
 ### Minor Changes

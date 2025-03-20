@@ -1,5 +1,11 @@
 # @callstack/polygen-metro-config
 
+## 0.2.1
+
+### Patch Changes
+
+- @callstack/polygen-project@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

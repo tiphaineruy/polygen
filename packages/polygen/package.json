@@ -1,6 +1,6 @@
 {
   "name": "@callstack/polygen",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "React Native Module for running WebAssembly modules, with native performance.",
   "source": "./src/index.ts",
   "main": "./dist/index.js",
@@ -47,7 +47,8 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "build": "tsc -p tsconfig.json",
-    "release": "release-it"
+    "release": "release-it",
+    "prepublishOnly": "cp ../../README.md ./"
   },
   "keywords": [
     "react-native",
@@ -67,7 +68,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@callstack/polygen-cli": "0.2.0",
+    "@callstack/polygen-cli": "0.2.1",
     "del-cli": "^5.1.0"
   },
   "devDependencies": {

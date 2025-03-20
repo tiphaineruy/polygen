@@ -1,5 +1,14 @@
 # @callstack/polygen-cli
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [65d6607]
+- Updated dependencies [65d6607]
+  - @callstack/polygen-codegen@0.2.1
+  - @callstack/polygen-project@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

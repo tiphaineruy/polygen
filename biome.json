@@ -5,6 +5,7 @@
     "ignoreUnknown": false,
     "ignore": [
       "!docs/lib",
+      "!docs/.source",
       "**/package.json",
       "**/ios",
       "**/android",

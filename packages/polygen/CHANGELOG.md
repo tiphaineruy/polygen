@@ -1,5 +1,12 @@
 # @callstack/polygen
 
+## 0.2.1
+
+### Patch Changes
+
+- Fixed init command when running using npx [28f5c55]
+  - @callstack/polygen-cli@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
