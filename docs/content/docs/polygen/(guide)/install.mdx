@@ -80,7 +80,6 @@ This will guide you through installation progress.
 
 If the `polygen init` does not work for you, or you want to install it manually:
 
-
 <Steps>
 
   <Step>
@@ -95,7 +94,7 @@ If the `polygen init` does not work for you, or you want to install it manually:
     Edit `package.json` of the project using `polygen`
 
     ```json title="package.json"
-        "scripts": {
+      "scripts": {
         "polygen": "polygen" // [!code ++]
       }
     ```
@@ -153,3 +152,50 @@ If the `polygen init` does not work for you, or you want to install it manually:
     ```
   </Step>
 </Steps>
+
+## Platform specific
+
+### iOS
+
+In your app's `Podspec` file, add the following line:
+
+
+<Tabs groupId="app-host" persist items={['React Native', 'RNTA']} default="React Native">
+  <Tab value="React Native">
+    ```ruby title="ios/Podfile"
+    ws_dir = Pathname.new(__dir__)  # [!code ++]
+    ws_dir = ws_dir.parent until  # [!code ++]
+      File.exist?("#{ws_dir}/node_modules/@callstack/polygen/polygen.rb") ||  # [!code ++]
+      ws_dir.expand_path.to_s == '/'  # [!code ++]
+    require "#{ws_dir}/node_modules/@callstack/polygen/polygen.rb"  # [!code ++]
+
+
+    target 'YourAppTarget' do
+      config = use_native_modules!
+
+      install_polygen # [!code ++]
+    end
+    ```
+  </Tab>
+  <Tab value="RNTA">
+    ```ruby title="ios/Podfile"
+    ws_dir = Pathname.new(__dir__)
+    ws_dir = ws_dir.parent until
+      File.exist?("#{ws_dir}/node_modules/@callstack/polygen/polygen.rb")
+      ws_dir.expand_path.to_s == '/'
+    require "#{ws_dir}/node_modules/react-native-test-app/test_app.rb"
+    require "#{ws_dir}/node_modules/@callstack/polygen/polygen.rb"  # [!code ++]
+
+
+    use_test_app! options do |target|
+      target.app do
+        install_polygen  # [!code ++]
+      end
+    end
+    ```
+  </Tab>
+</Tabs>
+
+### Android
+
+Android support is being worked on.

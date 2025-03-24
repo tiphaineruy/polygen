@@ -83,6 +83,7 @@ This gives us the ability to run WebAssembly modules in a statically compiled wa
 ## Requirements
 
 - React Native 0.75+
+- Only new RN Architecture is supported
 
 ## Prerequisites
 
