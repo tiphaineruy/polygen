@@ -62,7 +62,7 @@ async function maybeAddDeps(
   }
 
   const shouldAdd = await consola.prompt(
-    `Do you want to add Polygen to this project?`,
+    `Do you want to install Polygen in this project?`,
     {
       type: 'confirm',
       cancel: 'null',
@@ -77,7 +77,7 @@ async function maybeAddDeps(
   if (shouldAdd) {
     await oraPromise(
       () => addDependency('@callstack/polygen', { silent: !verbose }),
-      'Adding Polygen'
+      'Installing Polygen'
     );
   } else {
     const addCommand = pm.name === 'yarn' ? 'add' : 'install';
